@@ -1,5 +1,5 @@
-import { KeyRound, Lock, ServerCrash } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Eye, EyeOff, KeyRound, Lock, ServerCrash } from 'lucide-react'
+import { useState } from 'react'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useAdminSession } from '@/modules/admin/useAdminSession'
 import { supabase } from '@/platform/supabase'
@@ -11,25 +11,6 @@ import { supabase } from '@/platform/supabase'
  */
 export function AdminGate({ children }: { children: React.ReactNode }) {
   const { status, email, signOut } = useAdminSession()
-
-  // Ссылка из письма возвращает токены во фрагменте URL. Клиент настроен
-  // не трогать фрагмент автоматически (он занят Telegram), поэтому
-  // разбираем его здесь — только на этом экране.
-  useEffect(() => {
-    if (!supabase) return
-    const hash = window.location.hash.replace(/^#/, '')
-    if (!hash.includes('access_token=')) return
-
-    const params = new URLSearchParams(hash)
-    const access_token = params.get('access_token')
-    const refresh_token = params.get('refresh_token')
-    if (!access_token || !refresh_token) return
-
-    void supabase.auth.setSession({ access_token, refresh_token }).then(() => {
-      // Токены не должны остаться в адресной строке и в истории
-      window.history.replaceState(null, '', window.location.pathname)
-    })
-  }, [])
 
   if (status === 'unconfigured') {
     return (
@@ -91,36 +72,39 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   )
 }
 
+/**
+ * Вход по почте и паролю.
+ *
+ * Ссылку на почту пришлось отложить: Supabase отправляет письмо на адрес
+ * из настройки Site URL, а она по умолчанию указывает на localhost:3000.
+ * Поменять её можно только в панели Supabase, поэтому пока — пароль.
+ */
 function SignInForm() {
   const [email, setEmail] = useState('')
-  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [password, setPassword] = useState('')
+  const [visible, setVisible] = useState(false)
+  const [state, setState] = useState<'idle' | 'sending' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
-  const send = async () => {
-    if (!supabase || !email.trim()) return
+  const signIn = async () => {
+    if (!supabase || !email.trim() || !password) return
     setState('sending')
+    setMessage('')
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      options: { emailRedirectTo: window.location.href },
+      password,
     })
 
     if (error) {
       setState('error')
-      setMessage(error.message)
-      return
+      setMessage(
+        error.message === 'Invalid login credentials'
+          ? 'Почта или пароль не подходят'
+          : error.message,
+      )
     }
-    setState('sent')
-  }
-
-  if (state === 'sent') {
-    return (
-      <EmptyState
-        icon={<KeyRound size={26} />}
-        title="Письмо отправлено"
-        text={`Откройте ссылку из письма на ${email} — она вернёт вас сюда уже с доступом. Ссылка действует час.`}
-      />
-    )
+    // При успехе экран сменится сам: useAdminSession увидит новую сессию.
   }
 
   return (
@@ -131,7 +115,7 @@ function SignInForm() {
         </span>
         <h1 className="text-[24px] font-extrabold tracking-[-0.02em]">Вход в редакцию</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-muted">
-          Введите почту — пришлём ссылку для входа. Пароль не нужен.
+          Почта и пароль администратора
         </p>
       </div>
 
@@ -139,19 +123,38 @@ function SignInForm() {
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && void send()}
         placeholder="почта@пример.ру"
-        autoComplete="email"
-        className="mb-3 w-full rounded-full bg-inset px-5 py-3.5 text-[16px] outline-none placeholder:text-muted"
+        autoComplete="username"
+        className="mb-2.5 w-full rounded-full bg-inset px-5 py-3.5 text-[16px] outline-none placeholder:text-muted"
       />
+
+      <div className="mb-3 flex items-center gap-2 rounded-full bg-inset pr-3 pl-5">
+        <input
+          type={visible ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && void signIn()}
+          placeholder="пароль"
+          autoComplete="current-password"
+          className="min-w-0 flex-1 bg-transparent py-3.5 text-[16px] outline-none placeholder:text-muted"
+        />
+        <button
+          type="button"
+          aria-label={visible ? 'Скрыть пароль' : 'Показать пароль'}
+          onClick={() => setVisible((v) => !v)}
+          className="press shrink-0 text-muted"
+        >
+          {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
 
       <button
         type="button"
-        disabled={state === 'sending' || !email.includes('@')}
-        onClick={() => void send()}
+        disabled={state === 'sending' || !email.includes('@') || password.length === 0}
+        onClick={() => void signIn()}
         className="press w-full rounded-full bg-cta py-3.5 text-[16px] font-semibold text-bg disabled:opacity-40"
       >
-        {state === 'sending' ? 'Отправляем…' : 'Прислать ссылку'}
+        {state === 'sending' ? 'Входим…' : 'Войти'}
       </button>
 
       {state === 'error' && (

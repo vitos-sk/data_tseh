@@ -11,7 +11,8 @@
     "seed:sql": "tsx scripts/generate-seed.ts",
     "db:apply": "tsx --env-file=.env.local scripts/run-sql.ts",
     "db:status": "tsx --env-file=.env.local scripts/db-status.ts",
-    "db:admin": "tsx --env-file=.env.local scripts/setup-admin.ts"
+    "db:admin": "tsx --env-file=.env.local scripts/setup-admin.ts",
+    "db:password": "tsx --env-file=.env.local scripts/set-admin-password.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",
