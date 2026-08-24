@@ -74,6 +74,14 @@ export const useLibraryStore = create<LibraryState>()(
     {
       name: 'library',
       storage: createJSONStorage(() => storage),
+      /*
+       * Версия 2: каталог переехал в базу, и у курсов сменились
+       * идентификаторы. Сохранённое по старым id указывает в пустоту —
+       * честнее очистить, чем показывать закладки на несуществующие курсы
+       * и слать заведомо пустые запросы.
+       */
+      version: 2,
+      migrate: () => ({ saved: [], completed: {}, lastOpened: null }),
       partialize: ({ saved, completed, lastOpened }) => ({ saved, completed, lastOpened }),
       onRehydrateStorage: () => (state) => {
         // Вызывается и при успехе, и при ошибке: интерфейс не должен ждать вечно.
