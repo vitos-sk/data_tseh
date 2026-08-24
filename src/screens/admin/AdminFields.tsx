@@ -1,0 +1,176 @@
+import { cn } from '@/lib/cn'
+
+const FIELD =
+  'w-full rounded-[var(--radius-inset)] bg-inset px-4 py-3 text-[16px] text-fg outline-none placeholder:text-muted'
+
+export function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string
+  hint?: string
+  children: React.ReactNode
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block px-1 text-[13px] font-semibold tracking-wide text-muted uppercase">
+        {label}
+      </span>
+      {children}
+      {hint && <span className="mt-1.5 block px-1 text-[13px] leading-snug text-muted">{hint}</span>}
+    </label>
+  )
+}
+
+export function TextInput({
+  value,
+  onChange,
+  placeholder,
+  className,
+}: {
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  className?: string
+}) {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className={cn(FIELD, className)}
+    />
+  )
+}
+
+export function NumberInput({
+  value,
+  onChange,
+  min = 1,
+}: {
+  value: number
+  onChange: (value: number) => void
+  min?: number
+}) {
+  return (
+    <input
+      type="number"
+      min={min}
+      value={value}
+      onChange={(e) => onChange(Math.max(min, Number(e.target.value) || min))}
+      className={cn(FIELD, 'tabular-nums')}
+    />
+  )
+}
+
+export function TextArea({
+  value,
+  onChange,
+  placeholder,
+  rows = 4,
+}: {
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  rows?: number
+}) {
+  return (
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={rows}
+      className={cn(FIELD, 'resize-y leading-relaxed')}
+    />
+  )
+}
+
+export function Select<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T
+  onChange: (value: T) => void
+  options: Array<{ value: T; label: string }>
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value as T)}
+      className={cn(FIELD, 'appearance-none')}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value} className="bg-surface">
+          {option.label}
+        </option>
+      ))}
+    </select>
+  )
+}
+
+/** Кнопка-переключатель в ряду: выбор одного из нескольких коротких значений. */
+export function ChoiceRow<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T
+  onChange: (value: T) => void
+  options: Array<{ value: T; label: string }>
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={cn(
+            'press rounded-full px-4 py-2 text-[15px] font-medium transition-colors duration-200',
+            value === option.value ? 'bg-gold text-bg' : 'bg-inset text-muted',
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function ToggleChips({
+  values,
+  onChange,
+  options,
+}: {
+  values: string[]
+  onChange: (values: string[]) => void
+  options: Array<{ value: string; label: string }>
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((option) => {
+        const active = values.includes(option.value)
+        return (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() =>
+              onChange(
+                active ? values.filter((v) => v !== option.value) : [...values, option.value],
+              )
+            }
+            className={cn(
+              'press rounded-full px-4 py-2 text-[15px] font-medium transition-colors duration-200',
+              active ? 'bg-gold text-bg' : 'bg-inset text-muted',
+            )}
+          >
+            {option.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
