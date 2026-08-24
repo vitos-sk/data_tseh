@@ -1,4 +1,5 @@
 export { catalogRepository } from './catalog.repository'
+export type { CatalogRepository } from './catalog.port'
 export type {
   Category,
   CategoryId,

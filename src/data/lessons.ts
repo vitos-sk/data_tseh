@@ -648,7 +648,7 @@ export const LESSONS_BY_COURSE: Record<string, Lesson[]> = Object.fromEntries(
  * добавили урок — забыли поправить длительность в карточке. При разработке
  * такие расхождения должны быть шумными, в проде проверка вырезается сборкой.
  */
-if (import.meta.env.DEV) {
+if (import.meta.env?.DEV) {
   for (const course of COURSES) {
     const lessons = LESSONS_BY_COURSE[course.id] ?? []
     const total = lessons.reduce((sum, lesson) => sum + lesson.durationMin, 0)

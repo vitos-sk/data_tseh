@@ -20,11 +20,16 @@ export interface Category {
   description: string
 }
 
-/** Обложка рисуется градиентом: своих картинок пока нет (см. docs/decisions). */
+/**
+ * Обложка курса. Градиент есть всегда — он служит и самостоятельной
+ * обложкой, и запасным вариантом, если картинка не загрузилась.
+ */
 export interface CourseCover {
   from: string
   to: string
   pattern: 'rings' | 'grid' | 'waves' | 'dots'
+  /** Загруженная в админку картинка. Если задана — показываем её поверх градиента. */
+  imageUrl?: string
 }
 
 export interface Course {

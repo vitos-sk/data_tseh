@@ -18,7 +18,18 @@ export function CoverArt({ cover, className, children }: CoverArtProps) {
       className={cn('relative overflow-hidden', className)}
       style={{ backgroundImage: `linear-gradient(140deg, ${cover.from} 0%, ${cover.to} 100%)` }}
     >
-      <Pattern pattern={cover.pattern} />
+      {cover.imageUrl ? (
+        // Градиент под картинкой виден, пока она грузится, и остаётся,
+        // если ссылка битая — пустого белого прямоугольника не будет.
+        <img
+          src={cover.imageUrl}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 size-full object-cover"
+        />
+      ) : (
+        <Pattern pattern={cover.pattern} />
+      )}
       {/* Затемнение снизу: под бейджами и текстом всегда должно читаться */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />
       {children}
