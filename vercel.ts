@@ -12,6 +12,11 @@ export const config: VercelConfig = {
   buildCommand: 'npm run build',
   outputDirectory: 'dist',
 
+  // Одностраничное приложение: любой путь должен отдавать index.html,
+  // иначе перезагрузка на /course/... вернёт 404 от CDN.
+  // Файлы с расширением исключены, чтобы не перехватывать ассеты.
+  rewrites: [routes.rewrite('/((?!assets/|favicon|icons|.*\\.[a-zA-Z0-9]+$).*)', '/index.html')],
+
   headers: [
     // Имена файлов в assets содержат хеш содержимого — их можно кэшировать навсегда
     routes.cacheControl('/assets/(.*)', {
