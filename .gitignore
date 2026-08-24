@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 .vercel
 .env*
+
+# Скиллы для агентов, поставленные интеграцией Supabase — локальный инструмент
+.agents/
+.claude/
+skills-lock.json
