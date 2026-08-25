@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn'
 
-type BadgeTone = 'gold' | 'neutral' | 'glass'
+type BadgeTone = 'red' | 'neutral' | 'glass'
 
 interface BadgeProps {
   children: React.ReactNode
@@ -9,21 +9,19 @@ interface BadgeProps {
 }
 
 const TONES: Record<BadgeTone, string> = {
-  gold: 'bg-gold text-bg',
-  neutral: 'bg-inset text-muted',
-  // Поверх обложки: полупрозрачный тёмный, чтобы читалось на любом градиенте
-  glass: 'bg-black/45 text-white backdrop-blur-sm',
+  // Заливка основным красным, текст белый: #dc2626 под мелким кеглем
+  // читается только как фон, но не как краска.
+  red: 'bg-red text-white',
+  neutral: 'bg-inset text-dim',
+  // Поверх обложки: тёмное стекло с красной рамкой
+  glass: 'bg-black/55 text-fg backdrop-blur-sm border border-hairline',
 }
 
+/** Метка. Всегда капс с широким трекингом — контрапункт строчным заголовкам. */
 export function Badge({ children, tone = 'neutral', className }: BadgeProps) {
   return (
     <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-1',
-        'text-[11px] font-semibold tracking-wide uppercase',
-        TONES[tone],
-        className,
-      )}
+      className={cn('label inline-flex items-center rounded-btn px-2 py-1', TONES[tone], className)}
     >
       {children}
     </span>

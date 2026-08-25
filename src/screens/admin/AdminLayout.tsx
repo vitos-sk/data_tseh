@@ -18,7 +18,7 @@ export function AdminLayout() {
   return (
     <div ref={scroller} className="h-full overflow-y-auto">
       <header
-        className="sticky top-0 z-30 flex items-center gap-3 border-b border-hairline bg-bg/90 px-5 pb-3 backdrop-blur-xl"
+        className="sticky top-0 z-30 flex items-center gap-3 border-b border-hairline bg-bg/90 px-5 pb-3 backdrop-blur-md"
         style={{ paddingTop: 'calc(var(--safe-top) + 12px)' }}
       >
         <button
@@ -26,15 +26,15 @@ export function AdminLayout() {
           onClick={() => navigate(adminPath())}
           className="press min-w-0 flex-1 text-left"
         >
-          <p className="text-[16px] font-bold tracking-[-0.01em]">Редакция</p>
-          <p className="truncate text-[12.5px] text-muted">{email}</p>
+          <p className="text-[15px] font-bold tracking-[0.14em] lowercase">редакция</p>
+          <p className="label mt-1 truncate text-dim">{email}</p>
         </button>
 
         <button
           type="button"
           onClick={() => void signOut()}
           aria-label="Выйти"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-full bg-inset text-muted"
+          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
         >
           <LogOut size={17} />
         </button>

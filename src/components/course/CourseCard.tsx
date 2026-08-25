@@ -25,13 +25,13 @@ export function CourseCard({ course }: { course: Course }) {
         haptic('tap')
         navigate(`/course/${course.slug}`)
       }}
-      className="press cursor-pointer rounded-[var(--radius-card)] bg-surface p-3"
+      className="glass glass-live cursor-pointer rounded-card p-2.5"
     >
-      <CoverArt cover={course.cover} className="h-44 rounded-2xl">
-        <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+      <CoverArt cover={course.cover} className="h-44 rounded-[2px]">
+        <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2">
           <div className="flex flex-wrap gap-1.5">
             {course.badges.map((badge) => (
-              <Badge key={badge} tone={badge === 'new' ? 'gold' : 'glass'}>
+              <Badge key={badge} tone={badge === 'new' ? 'red' : 'glass'}>
                 {BADGE_LABEL[badge]}
               </Badge>
             ))}
@@ -39,7 +39,7 @@ export function CourseCard({ course }: { course: Course }) {
           <SaveButton courseId={course.id} />
         </div>
 
-        <div className="absolute inset-x-3 bottom-3 flex items-center gap-2">
+        <div className="absolute inset-x-2.5 bottom-2.5 flex items-center gap-1.5">
           <Badge tone="glass">{formatDuration(course.durationMin)}</Badge>
           <Badge tone="glass">{pluralLessons(course.lessonsCount)}</Badge>
         </div>
@@ -48,8 +48,8 @@ export function CourseCard({ course }: { course: Course }) {
       <div className="flex items-start gap-3 px-1 pt-3.5 pb-1">
         <CategoryIcon category={category} size="sm" />
         <div className="min-w-0 flex-1">
-          <h3 className="text-[17px] leading-snug font-bold tracking-[-0.01em]">{course.title}</h3>
-          <p className="mt-1 line-clamp-2 text-[14px] leading-snug text-muted">
+          <h3 className="text-[15.5px] leading-snug font-bold tracking-[0.04em]">{course.title}</h3>
+          <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.6] text-dim">
             {course.subtitle}
           </p>
         </div>
@@ -58,7 +58,7 @@ export function CourseCard({ course }: { course: Course }) {
       {progress > 0 && (
         <div className="mt-3 flex items-center gap-3 px-1 pb-1">
           <ProgressBar value={progress} className="flex-1" />
-          <span className="text-[13px] font-semibold text-gold tabular-nums">
+          <span className="label text-red-bright tabular-nums">
             {Math.round(progress * 100)}%
           </span>
         </div>

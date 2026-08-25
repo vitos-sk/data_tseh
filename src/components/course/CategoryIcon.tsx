@@ -1,5 +1,5 @@
 import { Briefcase, Code2, Hammer, Sparkles, Zap } from 'lucide-react'
-import { COLORS } from '@/app/colors'
+import { ACCENT } from '@/app/colors'
 import { cn } from '@/lib/cn'
 import type { Category, IconName } from '@/modules/catalog'
 
@@ -17,21 +17,24 @@ interface CategoryIconProps {
   className?: string
 }
 
-/** Круглая иконка направления: цветной значок на тонированной подложке того же цвета. */
+/**
+ * Значок направления. Квадрат с красной рамкой: направления различаются
+ * интенсивностью красного, а не цветом — палитра держится на одной оси.
+ */
 export function CategoryIcon({ category, size = 'md', className }: CategoryIconProps) {
   const Icon = ICONS[category.icon]
-  const color = COLORS[category.accent]
+  const color = ACCENT[category.accent]
 
   return (
     <div
       className={cn(
-        'flex shrink-0 items-center justify-center rounded-full',
+        'flex shrink-0 items-center justify-center rounded-btn border',
         size === 'md' ? 'size-11' : 'size-9',
         className,
       )}
-      style={{ backgroundColor: `${color}1F` }}
+      style={{ backgroundColor: `${color}14`, borderColor: `${color}3D` }}
     >
-      <Icon size={size === 'md' ? 20 : 17} color={color} strokeWidth={2.2} />
+      <Icon size={size === 'md' ? 19 : 16} color={color} strokeWidth={2} />
     </div>
   )
 }

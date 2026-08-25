@@ -97,11 +97,11 @@ export function AdminCourseScreen() {
           type="button"
           onClick={() => navigate(adminPath())}
           aria-label="К списку курсов"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-full bg-inset text-muted"
+          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
         >
           <ArrowLeft size={18} />
         </button>
-        <h1 className="min-w-0 flex-1 truncate text-[20px] font-bold tracking-[-0.02em]">
+        <h1 className="min-w-0 flex-1 truncate text-[17px] font-bold tracking-[0.1em] lowercase">
           {draft.title || 'Без названия'}
         </h1>
       </div>
@@ -179,14 +179,14 @@ export function AdminCourseScreen() {
         </Field>
       </div>
 
-      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-cat-orange">{error}</p>}
+      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>}
 
       <div className="mt-6 px-5">
         <button
           type="button"
           onClick={() => void save()}
           disabled={state === 'saving'}
-          className="press w-full rounded-full bg-cta py-3.5 text-[16px] font-semibold text-bg disabled:opacity-40"
+          className="press w-full rounded-btn bg-red py-3.5 text-[16px] font-semibold text-white disabled:opacity-40"
         >
           {state === 'saving' ? 'Сохраняем…' : state === 'saved' ? 'Сохранено' : 'Сохранить'}
         </button>
@@ -233,7 +233,7 @@ function CoverEditor({
 
       <div className="flex flex-col gap-3">
         <div className="flex gap-2">
-          <label className="press flex-1 cursor-pointer rounded-full bg-inset py-2.5 text-center text-[15px] font-medium text-muted">
+          <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center text-[15px] font-medium text-dim">
             {uploading ? 'Загружаем…' : 'Загрузить картинку'}
             <input
               type="file"
@@ -250,7 +250,7 @@ function CoverEditor({
             <button
               type="button"
               onClick={() => onChange({ ...cover, imageUrl: undefined })}
-              className="press rounded-full bg-inset px-4 py-2.5 text-[15px] font-medium text-muted"
+              className="press rounded-btn bg-inset px-4 py-2.5 text-[15px] font-medium text-dim"
             >
               Убрать
             </button>
@@ -273,7 +273,7 @@ function CoverEditor({
         </div>
       </div>
 
-      {error && <span className="mt-2 block text-[13px] text-cat-orange">{error}</span>}
+      {error && <span className="mt-2 block text-[13px] text-red-bright">{error}</span>}
     </Field>
   )
 }
@@ -284,7 +284,7 @@ function ColorInput({ value, onChange }: { value: string; onChange: (value: stri
       type="color"
       value={value}
       onChange={(e) => onChange(e.target.value.toUpperCase())}
-      className="size-11 shrink-0 cursor-pointer rounded-full border-none bg-transparent p-0"
+      className="size-11 shrink-0 cursor-pointer rounded-btn border-none bg-transparent p-0"
       style={{ appearance: 'none' }}
     />
   )
@@ -304,11 +304,11 @@ function LessonList({
   return (
     <section className="mt-9 px-5">
       <div className="mb-2.5 flex items-center justify-between px-1">
-        <h2 className="text-[13px] font-semibold tracking-wide text-muted uppercase">Уроки</h2>
+        <h2 className="text-[13px] font-semibold tracking-wide text-dim uppercase">Уроки</h2>
         <button
           type="button"
           onClick={onAdd}
-          className="press flex items-center gap-1 text-[15px] font-medium text-gold"
+          className="press flex items-center gap-1 text-[15px] font-medium text-red-bright"
         >
           <Plus size={16} strokeWidth={2.6} />
           Добавить
@@ -316,7 +316,7 @@ function LessonList({
       </div>
 
       {lessons.length === 0 ? (
-        <p className="rounded-[var(--radius-card)] bg-surface p-4 text-[15px] text-muted">
+        <p className="rounded-[var(--radius-card)] bg-surface p-4 text-[15px] text-dim">
           Уроков ещё нет. Курс без уроков публиковать бессмысленно.
         </p>
       ) : (
@@ -324,7 +324,7 @@ function LessonList({
           <div className="divide-y divide-hairline">
             {lessons.map((lesson) => (
               <div key={lesson.id} className="flex items-center gap-2 px-3 py-3">
-                <GripVertical size={16} className="shrink-0 text-muted/50" />
+                <GripVertical size={16} className="shrink-0 text-dim/50" />
 
                 <button
                   type="button"
@@ -334,7 +334,7 @@ function LessonList({
                   <span className="block truncate text-[16px] font-medium">
                     {lesson.order}. {lesson.title || 'Без названия'}
                   </span>
-                  <span className="mt-0.5 block text-[13px] text-muted">
+                  <span className="mt-0.5 block text-[13px] text-dim">
                     {formatDuration(lesson.durationMin)} · блоков: {lesson.blocks.length}
                   </span>
                 </button>
@@ -346,7 +346,7 @@ function LessonList({
                     await adminRepository.deleteLesson(lesson.id)
                     onDeleted()
                   }}
-                  className="press flex size-8 shrink-0 items-center justify-center rounded-full bg-inset text-muted"
+                  className="press flex size-8 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
                 >
                   <Trash2 size={15} />
                 </button>
@@ -370,14 +370,14 @@ function DangerZone({ onDelete }: { onDelete: () => void }) {
           <button
             type="button"
             onClick={() => setAsking(false)}
-            className="press rounded-full bg-inset px-3.5 py-1.5 text-[14px] text-muted"
+            className="press rounded-btn bg-inset px-3.5 py-1.5 text-[14px] text-dim"
           >
             Отмена
           </button>
           <button
             type="button"
             onClick={onDelete}
-            className="press rounded-full bg-cat-orange px-3.5 py-1.5 text-[14px] font-semibold text-bg"
+            className="press rounded-btn bg-red px-3.5 py-1.5 text-[14px] font-semibold text-white"
           >
             Удалить
           </button>
@@ -386,7 +386,7 @@ function DangerZone({ onDelete }: { onDelete: () => void }) {
         <button
           type="button"
           onClick={() => setAsking(true)}
-          className="press w-full rounded-full bg-surface py-3 text-[15px] font-medium text-cat-orange"
+          className="press w-full rounded-btn bg-surface py-3 text-[15px] font-medium text-red-bright"
         >
           Удалить курс
         </button>

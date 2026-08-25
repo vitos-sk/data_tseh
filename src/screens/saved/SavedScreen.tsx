@@ -23,27 +23,27 @@ export function SavedScreen() {
   const busy = !hydrated || loading
 
   return (
-    <Screen title="Сохранённое" subtitle="Курсы, к которым вы хотите вернуться">
+    <Screen title="закладки" subtitle="Курсы, к которым вы хотите вернуться">
       {busy && (
         <div className="flex flex-col gap-2.5 px-5">
           {Array.from({ length: 3 }, (_, i) => (
-            <Skeleton key={i} className="h-[88px] rounded-[var(--radius-card)]" />
+            <Skeleton key={i} className="h-[88px]" />
           ))}
         </div>
       )}
 
       {!busy && saved.length === 0 && (
         <EmptyState
-          icon={<BookmarkPlus size={26} />}
-          title="Пока ничего не сохранено"
+          icon={<BookmarkPlus size={24} />}
+          title="пока ничего не сохранено"
           text="Нажмите на закладку у любого курса — он появится здесь и не потеряется."
           action={
             <button
               type="button"
               onClick={() => navigate('/catalog')}
-              className="press rounded-full bg-cta px-6 py-3 text-[16px] font-semibold text-bg"
+              className="btn-arm"
             >
-              Открыть каталог
+              открыть каталог
             </button>
           }
         />

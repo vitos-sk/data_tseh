@@ -5,10 +5,19 @@ export const AUTHOR = {
   about:
     'Цех — небольшая мастерская коротких курсов. Мы делаем уроки, которые читаются за перекур и применяются в тот же день: без вступлений на двадцать минут и без воды. Пять направлений, живые примеры, честные оговорки о том, где метод не работает.',
   links: [
-    { id: 'channel', label: 'Канал в Telegram', value: '@tseh', href: 'https://t.me/tseh' },
-    { id: 'chat', label: 'Чат учеников', value: '@tseh_chat', href: 'https://t.me/tseh_chat' },
-    { id: 'site', label: 'Сайт', value: 'tseh.ru', href: 'https://tseh.ru' },
-    { id: 'mail', label: 'Написать нам', value: 'hi@tseh.ru', href: 'mailto:hi@tseh.ru' },
+    {
+      id: 'channel',
+      label: 'Канал в Telegram',
+      value: '@mindtools_ai',
+      href: 'https://t.me/mindtools_ai',
+    },
+    // Чат закрытый: у него нет @имени, только ссылка-приглашение.
+    {
+      id: 'chat',
+      label: 'Чат учеников',
+      value: 'вступить',
+      href: 'https://t.me/+aQhj6CFdb-c0OGY6',
+    },
   ],
 } as const
 

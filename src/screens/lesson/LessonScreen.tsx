@@ -53,7 +53,7 @@ export function LessonScreen() {
     }
   }
 
-  const actionLabel = next ? (done ? 'Следующий урок' : 'Готово, дальше') : 'Завершить курс'
+  const actionLabel = next ? (done ? 'следующий урок' : 'готово, дальше') : 'завершить курс'
 
   useMainButton({ text: actionLabel, visible: Boolean(lesson), onClick: finish })
 
@@ -63,17 +63,17 @@ export function LessonScreen() {
         <Skeleton className="h-7 w-2/3" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full" />
       </div>
     )
   }
 
-  const positionLabel = `Урок ${lesson.order} из ${course.lessonsCount}`
+  const positionLabel = `урок ${lesson.order} / ${course.lessonsCount}`
 
   return (
     <div className="min-h-full pb-[calc(var(--tabbar-height)+var(--safe-bottom)+40px)]">
       <header
-        className="sticky top-0 z-30 bg-bg/90 px-5 pb-3 backdrop-blur-xl"
+        className="sticky top-0 z-30 border-b border-hairline bg-bg/90 px-5 pb-3 backdrop-blur-md"
         style={{ paddingTop: 'calc(var(--safe-top) + 12px)' }}
       >
         <div className="flex items-center gap-3">
@@ -82,18 +82,18 @@ export function LessonScreen() {
               type="button"
               onClick={goBack}
               aria-label="К программе курса"
-              className="press flex size-9 shrink-0 items-center justify-center rounded-full bg-inset text-muted"
+              className="press flex size-9 shrink-0 items-center justify-center rounded-btn border border-hairline bg-inset text-dim"
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={17} />
             </button>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] text-muted">{course.title}</p>
-            <p className="text-[14px] font-semibold">{positionLabel}</p>
+            <p className="truncate text-[11.5px] tracking-[0.02em] text-dim">{course.title}</p>
+            <p className="label mt-0.5 text-red-bright">{positionLabel}</p>
           </div>
           {done && (
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gold text-bg">
-              <Check size={15} strokeWidth={3} />
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-btn bg-red text-white">
+              <Check size={14} strokeWidth={3} />
             </span>
           )}
         </div>
@@ -101,23 +101,17 @@ export function LessonScreen() {
       </header>
 
       <article className="px-5 pt-5">
-        <h1 className="text-[28px] leading-[1.15] font-extrabold tracking-[-0.03em]">
+        <h1 className="text-[23px] leading-[1.25] font-extrabold tracking-[0.08em]">
           {lesson.title}
         </h1>
-        <p className="mt-2 mb-7 text-[14px] text-muted">
-          {formatDuration(lesson.durationMin)} чтения
-        </p>
+        <p className="label mt-3 mb-8 text-dim">{formatDuration(lesson.durationMin)} чтения</p>
 
         <BlockRenderer blocks={lesson.blocks} />
       </article>
 
       {!isInsideTelegram() && (
-        <div className="mt-9 px-5">
-          <button
-            type="button"
-            onClick={finish}
-            className="press w-full rounded-full bg-cta py-4 text-[17px] font-semibold text-bg"
-          >
+        <div className="mt-10 px-5">
+          <button type="button" onClick={finish} className="btn-arm w-full">
             {actionLabel}
           </button>
         </div>

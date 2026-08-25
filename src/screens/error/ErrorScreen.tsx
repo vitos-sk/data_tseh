@@ -16,8 +16,8 @@ export function ErrorScreen() {
   return (
     <div className="flex h-full flex-col items-center justify-center">
       <EmptyState
-        icon={<Compass size={26} />}
-        title={notFound ? 'Такой страницы нет' : 'Что-то пошло не так'}
+        icon={<Compass size={24} />}
+        title={notFound ? 'такой страницы нет' : 'что-то пошло не так'}
         text={
           notFound
             ? 'Ссылка ведёт в пустоту. Возможно, курс переименовали или удалили.'
@@ -27,9 +27,9 @@ export function ErrorScreen() {
           <button
             type="button"
             onClick={() => navigate('/', { replace: true })}
-            className="press rounded-full bg-cta px-6 py-3 text-[16px] font-semibold text-bg"
+            className="btn-arm"
           >
-            На главную
+            на главную
           </button>
         }
       />

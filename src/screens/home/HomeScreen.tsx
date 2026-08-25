@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { CategoryFilter, type CategoryFilterValue } from '@/components/course/CategoryFilter'
 import { ContinueSection } from '@/components/course/ContinueSection'
 import { CourseCard } from '@/components/course/CourseCard'
+import { GlitchText } from '@/components/fx/GlitchText'
+import { Terminal } from '@/components/fx/Terminal'
 import { Screen } from '@/components/layout/Screen'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SectionHeader } from '@/components/ui/SectionHeader'
@@ -22,43 +24,63 @@ export function HomeScreen() {
 
   return (
     <Screen>
-      <header className="px-5 pt-2 pb-4">
-        <p className="text-[15px] font-medium text-muted">
-          {user ? `Привет, ${user.first_name}` : 'Привет'}
-        </p>
-        <h1 className="mt-1 text-[32px] leading-[1.1] font-extrabold tracking-[-0.03em]">
-          Чему научимся
-          <br />
-          сегодня?
-        </h1>
-      </header>
+      <div className="relative">
+        <header className="px-5 pt-3 pb-6">
+          <p className="label mb-4 text-dim">
+            <span className="pulsar mr-2 inline-block size-1.5 rounded-full bg-ok align-middle text-ok" />
+            online
+          </p>
 
-      <CategoryFilter value={filter} onChange={setFilter} />
+          {/*
+            Логотип-герой: строчная развёртка залита в сам текст через
+            background-clip, а глитч-двойники поверх остаются сплошными —
+            иначе в момент рывка буквы теряются совсем.
+          */}
+          <h1 className="scanline-text text-[54px] leading-none font-extrabold tracking-[0.16em] uppercase">
+            <GlitchText>ЦЕХ</GlitchText>
+          </h1>
 
-      {filter === 'all' && <ContinueSection />}
+          <p className="mt-4 text-[13px] leading-[1.7] tracking-[0.02em] text-dim">
+            короткие курсы без воды
+          </p>
+        </header>
 
-      <section className="pt-6">
-        <SectionHeader title={filter === 'all' ? 'Рекомендуем' : 'Курсы направления'} />
-
-        <div className="flex flex-col gap-3.5 px-5">
-          {loading && (
-            <>
-              <CourseCardSkeleton />
-              <CourseCardSkeleton />
-            </>
-          )}
-
-          {!loading && courses?.length === 0 && (
-            <EmptyState
-              icon={<SearchX size={26} />}
-              title="Тут пока пусто"
-              text="В этом направлении ещё нет курсов. Загляните в другое — там есть что почитать."
-            />
-          )}
-
-          {!loading && courses?.map((course) => <CourseCard key={course.id} course={course} />)}
+        <div className="mb-6 px-5">
+          <Terminal
+            lines={[
+              user ? `здравствуйте, ${user.first_name}` : 'здравствуйте, гость',
+              'чему научимся сегодня?',
+            ]}
+          />
         </div>
-      </section>
+
+        <CategoryFilter value={filter} onChange={setFilter} />
+
+        {filter === 'all' && <ContinueSection />}
+
+        <section className="pt-7">
+          <SectionHeader title={filter === 'all' ? 'рекомендуем' : 'направление'} />
+
+          <div className="flex flex-col gap-3 px-5">
+            {loading && (
+              <>
+                <CourseCardSkeleton />
+                <CourseCardSkeleton />
+              </>
+            )}
+
+            {!loading && courses?.length === 0 && (
+              <EmptyState
+                icon={<SearchX size={24} />}
+                title="тут пока пусто"
+                text="В этом направлении ещё нет курсов. Загляните в другое — там есть что почитать."
+              />
+            )}
+
+            {!loading && courses?.map((course) => <CourseCard key={course.id} course={course} />)}
+          </div>
+        </section>
+      </div>
     </Screen>
   )
 }

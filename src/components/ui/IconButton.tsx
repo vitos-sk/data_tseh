@@ -9,7 +9,7 @@ interface IconButtonProps {
   className?: string
 }
 
-/** Круглая кнопка-иконка на вложенной поверхности. */
+/** Квадратная кнопка-иконка. Размер 40px — минимальная цель касания. */
 export function IconButton({ children, onClick, label, active, className }: IconButtonProps) {
   return (
     <button
@@ -22,9 +22,11 @@ export function IconButton({ children, onClick, label, active, className }: Icon
         onClick()
       }}
       className={cn(
-        'press flex size-10 shrink-0 items-center justify-center rounded-full',
+        'press flex size-10 shrink-0 items-center justify-center rounded-btn border',
         'transition-colors duration-200',
-        active ? 'bg-gold text-bg' : 'bg-inset text-muted',
+        active
+          ? 'border-red bg-red text-white'
+          : 'border-hairline bg-inset text-dim active:border-red/35 active:text-red-bright',
         className,
       )}
     >

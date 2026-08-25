@@ -7,7 +7,7 @@ interface ChipProps {
   onClick: () => void
 }
 
-/** Pill-фильтр. Активный — золотой, это главный сигнатурный элемент интерфейса. */
+/** Фильтр направления. Активный залит красным — это главный сигнал выбора. */
 export function Chip({ label, active = false, onClick }: ChipProps) {
   return (
     <button
@@ -18,9 +18,11 @@ export function Chip({ label, active = false, onClick }: ChipProps) {
       }}
       aria-pressed={active}
       className={cn(
-        'press shrink-0 rounded-full px-4 py-2 text-[15px] font-medium whitespace-nowrap',
+        'label shrink-0 rounded-btn border px-3.5 py-2.5 whitespace-nowrap',
         'transition-colors duration-200',
-        active ? 'bg-gold text-bg' : 'bg-surface text-muted',
+        active
+          ? 'border-red bg-red text-white shadow-[var(--glow-hover)]'
+          : 'border-hairline bg-surface text-dim active:border-red/35 active:text-fg',
       )}
     >
       {label}

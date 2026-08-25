@@ -7,7 +7,7 @@ import { haptic } from '@/platform/telegram'
 const TABS = [
   { to: '/', label: 'Главная', Icon: House, end: true },
   { to: '/catalog', label: 'Каталог', Icon: LayoutGrid, end: false },
-  { to: '/saved', label: 'Сохранённое', Icon: Bookmark, end: false },
+  { to: '/saved', label: 'Закладки', Icon: Bookmark, end: false },
   { to: '/profile', label: 'Профиль', Icon: User, end: false },
 ] as const
 
@@ -28,7 +28,7 @@ export function TabBar() {
 
   return (
     <nav
-      className="absolute inset-x-0 bottom-0 z-40 border-t border-hairline bg-bg/85 backdrop-blur-xl"
+      className="absolute inset-x-0 bottom-0 z-40 border-t border-red/20 bg-bg/90 backdrop-blur-md"
       style={{ paddingBottom: 'var(--safe-bottom)' }}
     >
       <ul className="flex h-[var(--tabbar-height)] items-stretch">
@@ -40,9 +40,11 @@ export function TabBar() {
               onClick={() => haptic('select')}
               className={({ isActive }) =>
                 cn(
-                  'flex h-full flex-col items-center justify-center gap-1',
+                  'relative flex h-full flex-col items-center justify-center gap-1.5',
                   'transition-colors duration-200',
-                  isActive || (courseIsOpen && to === '/catalog') ? 'text-gold' : 'text-muted',
+                  isActive || (courseIsOpen && to === '/catalog')
+                    ? 'text-red-bright'
+                    : 'text-dim',
                 )
               }
             >
@@ -50,21 +52,27 @@ export function TabBar() {
                 const active = isActive || (courseIsOpen && to === '/catalog')
                 return (
                   <>
+                    {/* Красная риска сверху: у активной вкладки «горит» контакт */}
+                    {active && (
+                      <span className="absolute inset-x-5 top-0 h-px bg-red shadow-[0_0_8px_rgba(220,38,38,0.7)]" />
+                    )}
                     <span className="relative">
-                      <Icon size={23} strokeWidth={active ? 2.4 : 1.9} />
+                      <Icon size={20} strokeWidth={active ? 2.2 : 1.8} />
                       {to === '/saved' && savedCount > 0 && (
                         <span
                           className={cn(
-                            'absolute -top-0.5 -right-1.5 flex min-w-4 justify-center rounded-full px-1',
-                            'text-[10px] leading-4 font-bold',
-                            active ? 'bg-gold text-bg' : 'bg-inset text-fg',
+                            'absolute -top-1 -right-2 flex min-w-4 justify-center rounded-[2px] px-1',
+                            'text-[9.5px] leading-4 font-bold tabular-nums',
+                            active ? 'bg-red text-white' : 'bg-inset text-dim',
                           )}
                         >
                           {savedCount}
                         </span>
                       )}
                     </span>
-                    <span className="text-[10.5px] font-medium tracking-tight">{label}</span>
+                    <span className="text-[9px] font-medium tracking-[0.18em] uppercase">
+                      {label}
+                    </span>
                   </>
                 )
               }}

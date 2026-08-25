@@ -7,11 +7,11 @@ interface SearchFieldProps {
   placeholder: string
 }
 
-/** Поле поиска на вложенной поверхности. Очистка — крестиком, без submit. */
+/** Поле поиска — строка приглашения терминала. Очистка крестиком, без submit. */
 export function SearchField({ value, onChange, placeholder }: SearchFieldProps) {
   return (
-    <div className="flex items-center gap-2.5 rounded-full bg-inset px-4 py-2.5">
-      <Search size={18} className="shrink-0 text-muted" />
+    <div className="glass glass-live flex items-center gap-2.5 rounded-btn px-3.5 py-3">
+      <Search size={16} className="shrink-0 text-red" />
 
       <input
         type="text"
@@ -23,7 +23,7 @@ export function SearchField({ value, onChange, placeholder }: SearchFieldProps) 
         enterKeyHint="search"
         autoComplete="off"
         spellCheck={false}
-        className="min-w-0 flex-1 bg-transparent text-[16px] text-fg outline-none placeholder:text-muted"
+        className="min-w-0 flex-1 bg-transparent text-[15px] tracking-[0.02em] text-fg caret-[var(--color-red-bright)] outline-none placeholder:text-dim"
       />
 
       {value && (
@@ -34,9 +34,9 @@ export function SearchField({ value, onChange, placeholder }: SearchFieldProps) 
             haptic('tap')
             onChange('')
           }}
-          className="press flex size-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-muted"
+          className="press flex size-5 shrink-0 items-center justify-center rounded-[2px] bg-red/20 text-red-bright"
         >
-          <X size={13} strokeWidth={2.6} />
+          <X size={12} strokeWidth={2.6} />
         </button>
       )}
     </div>

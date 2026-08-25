@@ -16,8 +16,8 @@ export function AdminGate({ children }: { children: React.ReactNode }) {
     return (
       <AdminShell>
         <EmptyState
-          icon={<ServerCrash size={26} />}
-          title="База не подключена"
+          icon={<ServerCrash size={24} />}
+          title="база не подключена"
           text="Нет ключей Supabase. Пока приложение работает на данных из кода, и редактировать нечего."
         />
       </AdminShell>
@@ -27,7 +27,7 @@ export function AdminGate({ children }: { children: React.ReactNode }) {
   if (status === 'loading') {
     return (
       <AdminShell>
-        <div className="px-5 py-20 text-center text-[15px] text-muted">Проверяем доступ…</div>
+        <div className="label px-5 py-20 text-center text-dim">проверяем доступ…</div>
       </AdminShell>
     )
   }
@@ -44,16 +44,16 @@ export function AdminGate({ children }: { children: React.ReactNode }) {
     return (
       <AdminShell>
         <EmptyState
-          icon={<Lock size={26} />}
-          title="Доступа нет"
+          icon={<Lock size={24} />}
+          title="доступа нет"
           text={`Вы вошли как ${email ?? 'неизвестно кто'}, но этой почты нет в списке администраторов.`}
           action={
             <button
               type="button"
               onClick={() => void signOut()}
-              className="press rounded-full bg-inset px-6 py-3 text-[16px] font-medium text-muted"
+              className="press rounded-btn border border-hairline bg-inset px-6 py-3 text-[14px] font-medium tracking-[0.06em] text-dim"
             >
-              Выйти
+              выйти
             </button>
           }
         />
@@ -110,13 +110,11 @@ function SignInForm() {
   return (
     <div className="mx-auto max-w-[360px]">
       <div className="mb-6 flex flex-col items-center text-center">
-        <span className="mb-5 flex size-16 items-center justify-center rounded-full bg-surface text-muted">
-          <KeyRound size={26} />
+        <span className="glass mb-5 flex size-14 items-center justify-center rounded-card text-red">
+          <KeyRound size={24} />
         </span>
-        <h1 className="text-[24px] font-extrabold tracking-[-0.02em]">Вход в редакцию</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-muted">
-          Почта и пароль администратора
-        </p>
+        <h1 className="text-[20px] font-extrabold tracking-[0.14em] lowercase">вход в редакцию</h1>
+        <p className="label mt-3 text-dim">почта и пароль администратора</p>
       </div>
 
       <input
@@ -125,10 +123,10 @@ function SignInForm() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="почта@пример.ру"
         autoComplete="username"
-        className="mb-2.5 w-full rounded-full bg-inset px-5 py-3.5 text-[16px] outline-none placeholder:text-muted"
+        className="mb-2.5 w-full rounded-btn border border-hairline bg-inset px-4 py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-red-bright)] outline-none placeholder:text-dim"
       />
 
-      <div className="mb-3 flex items-center gap-2 rounded-full bg-inset pr-3 pl-5">
+      <div className="mb-4 flex items-center gap-2 rounded-btn border border-hairline bg-inset pr-3 pl-4">
         <input
           type={visible ? 'text' : 'password'}
           value={password}
@@ -136,13 +134,13 @@ function SignInForm() {
           onKeyDown={(e) => e.key === 'Enter' && void signIn()}
           placeholder="пароль"
           autoComplete="current-password"
-          className="min-w-0 flex-1 bg-transparent py-3.5 text-[16px] outline-none placeholder:text-muted"
+          className="min-w-0 flex-1 bg-transparent py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-red-bright)] outline-none placeholder:text-dim"
         />
         <button
           type="button"
           aria-label={visible ? 'Скрыть пароль' : 'Показать пароль'}
           onClick={() => setVisible((v) => !v)}
-          className="press shrink-0 text-muted"
+          className="press shrink-0 text-dim"
         >
           {visible ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
@@ -152,13 +150,13 @@ function SignInForm() {
         type="button"
         disabled={state === 'sending' || !email.includes('@') || password.length === 0}
         onClick={() => void signIn()}
-        className="press w-full rounded-full bg-cta py-3.5 text-[16px] font-semibold text-bg disabled:opacity-40"
+        className="btn-arm w-full disabled:opacity-40"
       >
-        {state === 'sending' ? 'Входим…' : 'Войти'}
+        {state === 'sending' ? 'входим…' : 'войти'}
       </button>
 
       {state === 'error' && (
-        <p className="mt-3 text-center text-[14px] leading-snug text-cat-orange">{message}</p>
+        <p className="mt-3 text-center text-[14px] leading-snug text-red-bright">{message}</p>
       )}
     </div>
   )

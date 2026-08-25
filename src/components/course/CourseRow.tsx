@@ -7,7 +7,13 @@ import { haptic } from '@/platform/telegram'
 import { CoverArt } from './CoverArt'
 import { SaveButton } from './SaveButton'
 
-/** Компактная строка курса: каталог и сохранённое. */
+/**
+ * Компактная строка курса: каталог и сохранённое.
+ *
+ * Здесь плоская поверхность вместо стекла: строк на экране много,
+ * а backdrop-filter на каждой заметно просаживает средний Android.
+ * Разницу видно только рядом с матрицей — на этих экранах её нет.
+ */
 export function CourseRow({ course }: { course: Course }) {
   const navigate = useNavigate()
   const done = useLibraryStore((s) => s.completed[course.id]?.length ?? 0)
@@ -19,16 +25,16 @@ export function CourseRow({ course }: { course: Course }) {
         haptic('tap')
         navigate(`/course/${course.slug}`)
       }}
-      className="press flex cursor-pointer items-center gap-3.5 rounded-[var(--radius-card)] bg-surface p-3"
+      className="glass-live flex cursor-pointer items-center gap-3 rounded-card border border-hairline bg-surface p-2.5"
     >
-      <CoverArt cover={course.cover} className="size-16 shrink-0 rounded-2xl" />
+      <CoverArt cover={course.cover} className="size-16 shrink-0 rounded-[2px]" />
 
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-[16px] font-semibold tracking-[-0.01em]">{course.title}</h3>
-        <p className="mt-0.5 truncate text-[13.5px] text-muted">
+        <h3 className="truncate text-[14.5px] font-bold tracking-[0.04em]">{course.title}</h3>
+        <p className="mt-1 truncate text-[12px] tracking-[0.02em] text-dim">
           {pluralLessons(course.lessonsCount)} · {formatDuration(course.durationMin)}
         </p>
-        {progress > 0 && <ProgressBar value={progress} className="mt-2 h-1" />}
+        {progress > 0 && <ProgressBar value={progress} className="mt-2.5" />}
       </div>
 
       <SaveButton courseId={course.id} variant="inset" />

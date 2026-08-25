@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { COLORS } from '@/app/colors'
 import { cn } from '@/lib/cn'
 import { haptic } from '@/platform/telegram'
 
@@ -7,12 +8,8 @@ import { haptic } from '@/platform/telegram'
 export function RowGroup({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
     <section className="px-5">
-      {title && (
-        <h2 className="mb-2.5 px-1 text-[13px] font-semibold tracking-wide text-muted uppercase">
-          {title}
-        </h2>
-      )}
-      <div className="overflow-hidden rounded-[var(--radius-card)] bg-surface">
+      {title && <h2 className="label mb-2.5 px-1 text-red">{title}</h2>}
+      <div className="glass overflow-hidden rounded-card">
         <div className="divide-y divide-hairline">{children}</div>
       </div>
     </section>
@@ -27,6 +24,19 @@ interface RowProps {
   accent?: string
 }
 
+/** Квадрат под значок строки. Тон задаётся акцентом, форма — общая. */
+function IconBox({ icon, accent }: { icon: React.ReactNode; accent?: string }) {
+  const color = accent ?? COLORS.red
+  return (
+    <span
+      className="flex size-8 shrink-0 items-center justify-center rounded-btn border"
+      style={{ backgroundColor: `${color}14`, borderColor: `${color}33`, color }}
+    >
+      {icon}
+    </span>
+  )
+}
+
 export function LinkRow({ icon, label, value, onClick, accent }: RowProps) {
   return (
     <button
@@ -35,17 +45,12 @@ export function LinkRow({ icon, label, value, onClick, accent }: RowProps) {
         haptic('tap')
         onClick?.()
       }}
-      className="press flex w-full items-center gap-3.5 px-4 py-3.5 text-left"
+      className="press flex w-full items-center gap-3.5 px-3.5 py-3.5 text-left"
     >
-      <span
-        className="flex size-8 shrink-0 items-center justify-center rounded-[10px]"
-        style={{ backgroundColor: accent ? `${accent}1F` : 'var(--color-inset)' }}
-      >
-        <span style={{ color: accent ?? 'var(--color-muted)' }}>{icon}</span>
-      </span>
-      <span className="flex-1 text-[16px] font-medium">{label}</span>
-      {value && <span className="text-[15px] text-muted">{value}</span>}
-      <ChevronRight size={18} className="shrink-0 text-muted" />
+      <IconBox icon={icon} accent={accent} />
+      <span className="flex-1 text-[14px] font-medium tracking-[0.03em]">{label}</span>
+      {value && <span className="text-[12.5px] tracking-[0.02em] text-dim">{value}</span>}
+      <ChevronRight size={16} className="shrink-0 text-dim" />
     </button>
   )
 }
@@ -61,19 +66,22 @@ interface ToggleRowProps {
 
 export function ToggleRow({ icon, label, hint, checked, onChange, accent }: ToggleRowProps) {
   return (
-    <div className="flex items-center gap-3.5 px-4 py-3.5">
-      <span
-        className="flex size-8 shrink-0 items-center justify-center rounded-[10px]"
-        style={{ backgroundColor: accent ? `${accent}1F` : 'var(--color-inset)' }}
-      >
-        <span style={{ color: accent ?? 'var(--color-muted)' }}>{icon}</span>
-      </span>
+    <div className="flex items-center gap-3.5 px-3.5 py-3.5">
+      <IconBox icon={icon} accent={accent} />
 
       <span className="min-w-0 flex-1">
-        <span className="block text-[16px] font-medium">{label}</span>
-        {hint && <span className="mt-0.5 block text-[13px] leading-snug text-muted">{hint}</span>}
+        <span className="block text-[14px] font-medium tracking-[0.03em]">{label}</span>
+        {hint && (
+          <span className="mt-1 block text-[11.5px] leading-snug tracking-[0.02em] text-dim">
+            {hint}
+          </span>
+        )}
       </span>
 
+      {/*
+        Переключатель квадратный, как всё остальное: круглый тумблер тянул бы
+        за собой iOS-эстетику, которой в интерфейсе больше нет.
+      */}
       <button
         type="button"
         role="switch"
@@ -84,17 +92,19 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
           onChange()
         }}
         className={cn(
-          'relative h-[31px] w-[51px] shrink-0 rounded-full transition-colors duration-200',
-          checked ? 'bg-gold' : 'bg-inset',
+          'relative h-[28px] w-[48px] shrink-0 rounded-btn border transition-colors duration-200',
+          checked
+            ? 'border-red bg-red/25 shadow-[var(--glow-red)]'
+            : 'border-hairline bg-inset',
         )}
       >
         <span
           className={cn(
             // left-0 обязателен: у button браузерный text-align: center,
-            // и без него абсолютный кружок встаёт по центру, а не слева.
-            'absolute top-[2px] left-0 size-[27px] rounded-full bg-white shadow-sm',
+            // и без него абсолютный бегунок встаёт по центру, а не слева.
+            'absolute top-[3px] left-0 size-[20px] rounded-[2px]',
             'transition-transform duration-200 ease-[var(--ease-ios)]',
-            checked ? 'translate-x-[22px]' : 'translate-x-[2px]',
+            checked ? 'translate-x-[25px] bg-red' : 'translate-x-[3px] bg-dim',
           )}
         />
       </button>
@@ -104,9 +114,11 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
 
 export function StatTile({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex-1 rounded-[var(--radius-inset)] bg-inset px-3 py-3.5 text-center">
-      <p className="text-[22px] leading-none font-extrabold tabular-nums">{value}</p>
-      <p className="mt-1.5 text-[12.5px] leading-tight text-muted">{label}</p>
+    <div className="flex-1 rounded-card border border-hairline bg-surface px-2 py-3.5 text-center">
+      <p className="text-[22px] leading-none font-extrabold text-red-bright tabular-nums">
+        {value}
+      </p>
+      <p className="label mt-2.5 leading-tight text-dim">{label}</p>
     </div>
   )
 }
@@ -135,17 +147,8 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
     return () => clearTimeout(timer)
   }, [asking])
 
-  const iconBox = (
-    <span
-      className="flex size-8 shrink-0 items-center justify-center rounded-[10px]"
-      style={{ backgroundColor: accent ? `${accent}1F` : 'var(--color-inset)' }}
-    >
-      <span style={{ color: accent ?? 'var(--color-muted)' }}>{icon}</span>
-    </span>
-  )
-
   // Пока вопроса нет, нажимается вся строка целиком: стрелка сама по себе —
-  // цель в 18 пикселей, мимо которой легко промахнуться пальцем.
+  // цель в 16 пикселей, мимо которой легко промахнуться пальцем.
   if (!asking) {
     return (
       <button
@@ -154,19 +157,21 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
           haptic('tap')
           setAsking(true)
         }}
-        className="press flex w-full items-center gap-3.5 px-4 py-3.5 text-left"
+        className="press flex w-full items-center gap-3.5 px-3.5 py-3.5 text-left"
       >
-        {iconBox}
-        <span className="flex-1 text-[16px] font-medium">{label}</span>
-        <ChevronRight size={18} className="shrink-0 text-muted" />
+        <IconBox icon={icon} accent={accent} />
+        <span className="flex-1 text-[14px] font-medium tracking-[0.03em]">{label}</span>
+        <ChevronRight size={16} className="shrink-0 text-dim" />
       </button>
     )
   }
 
   return (
-    <div className="flex items-center gap-3.5 px-4 py-3.5">
-      {iconBox}
-      <span className="min-w-0 flex-1 text-[16px] font-medium">{confirmLabel}</span>
+    <div className="flex items-center gap-3 px-3.5 py-3.5">
+      <IconBox icon={icon} accent={accent} />
+      <span className="min-w-0 flex-1 text-[13px] font-medium tracking-[0.03em]">
+        {confirmLabel}
+      </span>
 
       <span className="flex shrink-0 gap-2">
         <button
@@ -175,9 +180,9 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
             haptic('tap')
             setAsking(false)
           }}
-          className="press rounded-full bg-inset px-3.5 py-1.5 text-[14px] font-medium text-muted"
+          className="press label rounded-btn border border-hairline px-3 py-2 text-dim"
         >
-          Отмена
+          отмена
         </button>
         <button
           type="button"
@@ -186,9 +191,9 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
             setAsking(false)
             onConfirm()
           }}
-          className="press rounded-full bg-gold px-3.5 py-1.5 text-[14px] font-semibold text-bg"
+          className="press label rounded-btn bg-red px-3 py-2 text-white"
         >
-          Сбросить
+          сбросить
         </button>
       </span>
     </div>

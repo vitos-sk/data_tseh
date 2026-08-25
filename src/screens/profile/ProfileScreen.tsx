@@ -1,5 +1,4 @@
-import { AtSign, Bell, Globe, Info, Link2, MessageCircle, Sparkles, Trash2 } from 'lucide-react'
-import { COLORS } from '@/app/colors'
+import { AtSign, Bell, Globe, Info, MessageCircle, Sparkles, Trash2 } from 'lucide-react'
 import { Screen } from '@/components/layout/Screen'
 import { APP_VERSION, AUTHOR } from '@/data/profile'
 import { lessonWord } from '@/lib/format'
@@ -11,8 +10,6 @@ import { ConfirmRow, LinkRow, RowGroup, StatTile, ToggleRow } from './ProfileRow
 const LINK_ICONS: Record<string, React.ReactNode> = {
   channel: <MessageCircle size={17} />,
   chat: <AtSign size={17} />,
-  site: <Link2 size={17} />,
-  mail: <Link2 size={17} />,
 }
 
 export function ProfileScreen() {
@@ -33,44 +30,43 @@ export function ProfileScreen() {
     : 'Гость'
 
   return (
-    <Screen title="Профиль">
+    <Screen title="профиль">
       {/* — кто вошёл — */}
       <section className="mb-7 px-5">
         <div className="flex items-center gap-4">
           {user?.photo_url ? (
-            <img
-              src={user.photo_url}
-              alt=""
-              className="size-16 shrink-0 rounded-full object-cover"
-            />
+            <div className="crt size-16 shrink-0 overflow-hidden rounded-avatar border border-red/30">
+              <img src={user.photo_url} alt="" className="size-full object-cover grayscale" />
+              {/* Тонирование: аватар тоже остаётся в палитре */}
+              <div className="absolute inset-0 bg-red mix-blend-color" />
+            </div>
           ) : (
-            <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-inset text-[24px] font-bold text-muted">
+            <div className="crt flex size-16 shrink-0 items-center justify-center rounded-avatar border border-red/30 bg-inset text-[22px] font-bold text-red-bright">
               {displayName.charAt(0)}
             </div>
           )}
 
           <div className="min-w-0">
-            <p className="truncate text-[20px] font-bold tracking-[-0.02em]">{displayName}</p>
-            <p className="mt-0.5 truncate text-[15px] text-muted">
-              {user?.username ? `@${user.username}` : 'Откройте в Telegram, чтобы войти'}
+            <p className="truncate text-[17px] font-bold tracking-[0.08em]">{displayName}</p>
+            <p className="label mt-2 truncate text-dim">
+              {user?.username ? `@${user.username}` : 'откройте в telegram, чтобы войти'}
             </p>
           </div>
         </div>
 
         <div className="mt-5 flex gap-2.5">
           <StatTile value={String(lessonsDone)} label={lessonWord(lessonsDone)} />
-          <StatTile value={String(coursesStarted)} label="курсов начато" />
-          <StatTile value={String(savedCount)} label="в закладках" />
+          <StatTile value={String(coursesStarted)} label="начато" />
+          <StatTile value={String(savedCount)} label="закладок" />
         </div>
       </section>
 
       <div className="flex flex-col gap-7">
-        <RowGroup title="Настройки">
+        <RowGroup title="настройки">
           <LinkRow
             icon={<Globe size={17} />}
             label="Язык"
             value="Русский"
-            accent={COLORS.blue}
             onClick={() => {
               // Второго языка пока нет — см. решение по мультиязычности.
             }}
@@ -81,7 +77,6 @@ export function ProfileScreen() {
             hint="Раз в неделю подтолкнём вернуться к начатому курсу"
             checked={reminders}
             onChange={toggleReminders}
-            accent={COLORS.orange}
           />
           <ToggleRow
             icon={<Sparkles size={17} />}
@@ -89,32 +84,30 @@ export function ProfileScreen() {
             hint="Переходы станут мгновенными"
             checked={reducedMotion}
             onChange={toggleReducedMotion}
-            accent={COLORS.purple}
           />
         </RowGroup>
 
-        <RowGroup title="Про нас">
+        <RowGroup title="про нас">
           {AUTHOR.links.map((link) => (
             <LinkRow
               key={link.id}
               icon={LINK_ICONS[link.id]}
               label={link.label}
               value={link.value}
-              accent={COLORS.green}
               onClick={() => openLink(link.href)}
             />
           ))}
         </RowGroup>
 
         <section className="px-5">
-          <div className="rounded-[var(--radius-card)] bg-surface p-4">
-            <div className="mb-2.5 flex items-center gap-2 text-muted">
-              <Info size={16} />
-              <h2 className="text-[13px] font-semibold tracking-wide uppercase">
+          <div className="glass rounded-card p-4">
+            <div className="mb-3 flex items-center gap-2 text-red">
+              <Info size={15} />
+              <h2 className="label">
                 {AUTHOR.name} — {AUTHOR.tagline}
               </h2>
             </div>
-            <p className="text-[15px] leading-relaxed text-muted">{AUTHOR.about}</p>
+            <p className="text-[13px] leading-[1.8] tracking-[0.01em] text-dim">{AUTHOR.about}</p>
           </div>
         </section>
 
@@ -123,12 +116,11 @@ export function ProfileScreen() {
             icon={<Trash2 size={17} />}
             label="Сбросить прогресс"
             confirmLabel="Удалить весь прогресс?"
-            accent={COLORS.orange}
             onConfirm={() => useLibraryStore.setState({ completed: {}, lastOpened: null })}
           />
         </RowGroup>
 
-        <p className="px-5 text-center text-[13px] text-muted">Версия {APP_VERSION}</p>
+        <p className="label px-5 text-center text-dim">версия {APP_VERSION}</p>
       </div>
     </Screen>
   )

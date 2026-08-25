@@ -34,11 +34,11 @@ export function ContinueSection() {
   const progress = course ? progressOf(done, course.lessonsCount) : 0
 
   return (
-    <section className="pt-4">
-      <SectionHeader title="Продолжить" />
+    <section className="pt-5">
+      <SectionHeader title="продолжить" />
 
       {!course ? (
-        <Skeleton className="mx-5 h-[86px] rounded-[var(--radius-card)]" />
+        <Skeleton className="mx-5 h-[82px]" />
       ) : (
         <button
           type="button"
@@ -46,22 +46,22 @@ export function ContinueSection() {
             haptic('tap')
             navigate(`/course/${course.slug}`)
           }}
-          className="press mx-5 flex w-[calc(100%-2.5rem)] items-center gap-3.5 rounded-[var(--radius-card)] bg-surface p-3 text-left"
+          className="glass glass-live mx-5 flex w-[calc(100%-2.5rem)] items-center gap-3 rounded-card p-2.5 text-left"
         >
-          <CoverArt cover={course.cover} className="size-14 shrink-0 rounded-xl" />
+          <CoverArt cover={course.cover} className="size-14 shrink-0 rounded-[2px]" />
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[16px] font-semibold tracking-[-0.01em]">{course.title}</p>
-            <div className="mt-2 flex items-center gap-2.5">
-              <ProgressBar value={progress} className="h-1 flex-1" />
-              <span className="shrink-0 text-[12.5px] font-medium text-muted tabular-nums">
-                {done} из {course.lessonsCount}
+            <p className="truncate text-[14px] font-bold tracking-[0.04em]">{course.title}</p>
+            <div className="mt-2.5 flex items-center gap-2.5">
+              <ProgressBar value={progress} className="flex-1" />
+              <span className="label shrink-0 text-dim tabular-nums">
+                {done}/{course.lessonsCount}
               </span>
             </div>
           </div>
 
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gold text-bg">
-            <ArrowRight size={18} strokeWidth={2.6} />
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-btn border border-red bg-red/10 text-red-bright">
+            <ArrowRight size={17} strokeWidth={2.2} />
           </span>
         </button>
       )}

@@ -12,7 +12,7 @@ interface CategoryFilterProps {
 /** Горизонтальная лента фильтров. Липнет к верху, чтобы не терялась при скролле. */
 export function CategoryFilter({ value, onChange }: CategoryFilterProps) {
   return (
-    <div className="sticky top-0 z-30 bg-bg/90 py-2 backdrop-blur-xl">
+    <div className="sticky top-0 z-30 border-y border-hairline bg-bg/85 py-2.5 backdrop-blur-md">
       {/* Маска справа подсказывает, что лента продолжается за краем */}
       <div
         className="scroll-x-clean flex gap-2 px-5"

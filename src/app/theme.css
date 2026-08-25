@@ -1,34 +1,50 @@
 @import 'tailwindcss';
 
 @theme {
-  /* — поверхности — */
-  --color-bg: #1a1a1c;
+  /* — поверхности —
+     Фон не чистый чёрный: на пару процентов светлее, иначе стекло и тени
+     на нём не читаются вообще. */
+  --color-bg: #050505;
   /* «Стол» вокруг колонки приложения — виден только на широком экране */
-  --color-page: #0b0b0c;
-  --color-surface: #262629;
-  --color-inset: #2e2e32;
-  --color-hairline: #333338;
+  --color-page: #000000;
+  /* Плоская замена стеклу там, где карточек много: списки, строки уроков.
+     Стекло на каждой карточке заметно просаживает средний Android. */
+  --color-surface: #0c0c0e;
+  --color-inset: #131316;
+  /* Разделители тоже красные, а не серые: от этого интерфейс тёплый */
+  --color-hairline: rgba(220, 38, 38, 0.14);
 
-  /* — текст — */
-  --color-fg: #ffffff;
-  --color-muted: #8e8e93;
+  /* — текст —
+     Не #fff: белый на почти чёрном жжёт глаза. */
+  --color-fg: #e5e5e5;
+  --color-muted: #a3a3a3;
+  /* Мелкие метки и футер. #737373 из оригинала даёт 4.30:1 и проваливает AA —
+     подняли до #8a8a8a. Уровень #525252 (2.61:1) не заведён намеренно. */
+  --color-dim: #8a8a8a;
 
-  /* — акценты — */
-  --color-cta: #f4f3ee;
-  --color-gold: #c9a84c;
+  /* — акцент —
+     Красный один. Всё остальное — нейтральная ось. */
+  --color-red: #dc2626;
+  /* На текст идёт осветлённый: 5.77:1 против 4.22:1 у основного.
+     Основной остаётся на рамках, заливках и свечениях. */
+  --color-red-bright: #ff3b3b;
+  --color-red-deep: #b91c1c;
 
-  /* — категории — */
-  --color-cat-green: #34c759;
-  --color-cat-orange: #ff9f0a;
-  --color-cat-blue: #3b9eff;
-  --color-cat-purple: #c77dff;
+  /* — статусы, единственные цвета вне красной оси — */
+  --color-ok: #22c55e;
+  --color-warn: #eab308;
 
-  /* — форма — */
-  --radius-card: 20px;
-  --radius-inset: 14px;
+  /* — форма —
+     Кнопка → карточка → аватар → крупный блок. */
+  --radius-btn: 4px;
+  --radius-card: 6px;
+  --radius-avatar: 8px;
+  --radius-inset: 4px;
+  --radius-lg: 14px;
 
   --font-sans:
-    'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    'JetBrains Mono', ui-monospace, 'SF Mono', 'Courier New', Courier, monospace;
+  --font-mono: var(--font-sans);
 
   /* — движение — */
   --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
@@ -44,7 +60,27 @@
     --tg-stable-height: 100dvh;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-top: env(safe-area-inset-top, 0px);
-    --tabbar-height: 64px;
+    --tabbar-height: 66px;
+
+    /* — стекло —
+       Четыре переменные держат всю глубину интерфейса. Красный живёт даже
+       в границе, поэтому стекло выглядит тёплым, а не серым. */
+    --glass-bg: linear-gradient(160deg, rgba(12, 12, 14, 0.42), rgba(0, 0, 0, 0.52));
+    --glass-border: rgba(220, 38, 38, 0.12);
+    --glass-border-active: rgba(220, 38, 38, 0.35);
+    --glass-blur: blur(5px);
+    --glow-red: 0 0 10px rgba(220, 38, 38, 0.14);
+    --glow-hover: 0 0 12px rgba(220, 38, 38, 0.16);
+    /* Вуаль поверх матрицы: без неё текст поверх капель не читается */
+    --veil: rgba(5, 5, 5, 0.78);
+  }
+
+  /* Поверх матрицы стекло плотнее, иначе сквозь карточку видно каждую каплю */
+  @media (max-width: 640px) {
+    :root {
+      --glass-bg: linear-gradient(160deg, rgba(12, 12, 14, 0.58), rgba(0, 0, 0, 0.66));
+      --glass-blur: blur(4px);
+    }
   }
 
   html,
@@ -59,34 +95,20 @@
     color: var(--color-fg);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
     overscroll-behavior-y: none;
-    /* Еле заметная зернистость поверх угольного фона */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-attachment: fixed;
-  }
-
-  /* Шум не должен светиться — приглушаем его наложением */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-color: var(--color-bg);
-    opacity: 0.965;
-    z-index: -1;
   }
 
   * {
     -webkit-tap-highlight-color: transparent;
+    /* В WebView Telegram без этого остаётся задержка клика в 300 мс */
+    touch-action: manipulation;
   }
 
   /* Клавиатурная навигация нужна на ПК, но кольцо не должно появляться от мыши */
   :focus-visible {
-    outline: 2px solid var(--color-gold);
+    outline: 1px solid var(--color-red);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   button {
@@ -95,18 +117,57 @@
     cursor: pointer;
   }
 
+  /* Скроллбар виден только на ПК — и там он красный, как всё остальное */
   ::-webkit-scrollbar {
     width: 0;
     height: 0;
   }
+
+  ::selection {
+    background: rgba(220, 38, 38, 0.35);
+    color: #fff;
+  }
 }
 
-@utility scroll-x-clean {
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+/* ────────────────────────────────────────────────────────────
+   Стекло
+   ──────────────────────────────────────────────────────────── */
+
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glow-red);
 }
 
+/*
+ * Реакция стекла на контакт. :hover в WebView Telegram не существует вовсе,
+ * поэтому каждое состояние продублировано в :active — иначе на телефоне
+ * интерфейс выглядит мёртвым.
+ */
+@utility glass-live {
+  transition:
+    border-color 200ms var(--ease-ios),
+    box-shadow 200ms var(--ease-ios),
+    transform 200ms var(--ease-ios);
+
+  &:active {
+    border-color: var(--glass-border-active);
+    box-shadow: var(--glow-hover);
+    transform: translateY(-2px);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--glass-border-active);
+      box-shadow: var(--glow-hover);
+      transform: translateY(-5px);
+    }
+  }
+}
+
+/* Нажатие для элементов без стекла: короткое проседание */
 @utility press {
   transition:
     transform 180ms var(--ease-ios),
@@ -118,11 +179,168 @@
     opacity: 0.85;
   }
 
-  /* Подсветка под курсором — только там, где курсор вообще есть */
   @media (hover: hover) {
     &:hover {
-      filter: brightness(1.09);
+      filter: brightness(1.15);
     }
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Фирменные приёмы
+   ──────────────────────────────────────────────────────────── */
+
+/*
+ * Строчная развёртка в тексте: 1px краски, 3px пустоты. Заливка идёт
+ * через background-clip, поэтому работает на любом размере кегля.
+ */
+@utility scanline-text {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-fg) 0px,
+    var(--color-fg) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility scanline-red {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-red-bright) 0px,
+    var(--color-red-bright) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* CRT-сетка поверх картинки: экран старого монитора */
+@utility crt {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.28) 0px,
+      rgba(0, 0, 0, 0.28) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+}
+
+/* Метка: капс, широкий трекинг, мелкий кегль. Контрапункт строчным заголовкам. */
+@utility label {
+  font-size: 10.5px;
+  line-height: 1.4;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/*
+ * Кнопка «под током»: призрачная красная рамка, заливка при контакте,
+ * дышащая тень. Единственная первичная кнопка в интерфейсе.
+ */
+@utility btn-arm {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* 14px по вертикали, а не 12px: иначе цель касания выходит около 42px,
+     то есть меньше минимальных 44px. */
+  padding: 14px 30px;
+  border: 1px solid var(--color-red);
+  border-radius: var(--radius-btn);
+  background: transparent;
+  color: var(--color-red-bright);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  animation: btn-arm 2.6s ease-in-out infinite;
+  transition:
+    background-color 180ms var(--ease-ios),
+    color 180ms var(--ease-ios);
+
+  &:active {
+    background: var(--color-red-deep);
+    color: #fff;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--color-red);
+      color: #fff;
+    }
+  }
+}
+
+@keyframes btn-arm {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(220, 38, 38, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(220, 38, 38, 0.26);
+  }
+}
+
+/* Радиальный пульсар: индикатор «онлайн» и точки состояния */
+@utility pulsar {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
+    opacity: 0.5;
+    animation: pulsar 2s ease-out infinite;
+  }
+}
+
+@keyframes pulsar {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Мигающий блок курсора в терминальных строках */
+@utility caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  vertical-align: -0.15em;
+  background: var(--color-red-bright);
+  animation: caret 1s step-end infinite;
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
   }
 }
 
@@ -140,6 +358,58 @@
 
 @utility screen-in {
   animation: screen-in 240ms var(--ease-ios) both;
+}
+
+@utility scroll-x-clean {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*
+ * Глитч. Два слоя-двойника дёргаются только в последние 10% цикла:
+ * редко — поэтому не раздражает и не мешает читать.
+ */
+@keyframes glitch-a {
+  0%,
+  90%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  91% {
+    transform: translate(-4px, -2px);
+    opacity: 0.75;
+  }
+  94% {
+    transform: translate(3px, 1px);
+    opacity: 0.5;
+  }
+  97% {
+    transform: translate(-2px, 2px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes glitch-b {
+  0%,
+  90%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  92% {
+    transform: translate(3px, 2px);
+    opacity: 0.6;
+  }
+  95% {
+    transform: translate(-3px, -1px);
+    opacity: 0.45;
+  }
+  98% {
+    transform: translate(2px, -2px);
+    opacity: 0.5;
+  }
 }
 
 /*

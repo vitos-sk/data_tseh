@@ -5,7 +5,7 @@ import { haptic } from '@/platform/telegram'
 
 interface SaveButtonProps {
   courseId: string
-  /** На обложке нужна стеклянная подложка, в списке — обычная вложенная. */
+  /** На обложке нужна стеклянная подложка, в списке — вложенная поверхность. */
   variant?: 'glass' | 'inset'
 }
 
@@ -25,12 +25,12 @@ export function SaveButton({ courseId, variant = 'glass' }: SaveButtonProps) {
         toggle(courseId)
       }}
       className={cn(
-        'press flex size-9 items-center justify-center rounded-full transition-colors duration-200',
-        variant === 'glass' ? 'bg-black/40 backdrop-blur-sm' : 'bg-inset',
-        saved ? 'text-gold' : 'text-white/80',
+        'press flex size-9 items-center justify-center rounded-btn border transition-colors duration-200',
+        variant === 'glass' ? 'bg-black/50 backdrop-blur-sm' : 'bg-inset',
+        saved ? 'border-red text-red-bright shadow-[var(--glow-red)]' : 'border-hairline text-dim',
       )}
     >
-      <Bookmark size={17} strokeWidth={2.2} fill={saved ? 'currentColor' : 'none'} />
+      <Bookmark size={16} strokeWidth={2} fill={saved ? 'currentColor' : 'none'} />
     </button>
   )
 }

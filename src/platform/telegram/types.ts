@@ -34,6 +34,8 @@ export interface TelegramWebApp {
 
   setHeaderColor(color: string): void
   setBackgroundColor(color: string): void
+  /** Появился в Bot API 7.10 — в старых клиентах метода нет */
+  setBottomBarColor?(color: string): void
   disableVerticalSwipes?(): void
   enableClosingConfirmation?(): void
 

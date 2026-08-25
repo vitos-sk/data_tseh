@@ -21,15 +21,15 @@ export function CatalogScreen() {
   )
 
   return (
-    <Screen title="Каталог" subtitle="Пять направлений, короткие курсы без воды">
+    <Screen title="каталог" subtitle="Пять направлений, короткие курсы без воды">
       <div className="mb-6 px-5">
-        <SearchField value={query} onChange={setQuery} placeholder="Найти курс или тему" />
+        <SearchField value={query} onChange={setQuery} placeholder="найти курс или тему" />
       </div>
 
       {loading && (
         <div className="flex flex-col gap-3 px-5">
           {Array.from({ length: 5 }, (_, i) => (
-            <Skeleton key={i} className="h-[88px] rounded-[var(--radius-card)]" />
+            <Skeleton key={i} className="h-[88px]" />
           ))}
         </div>
       )}
@@ -46,7 +46,7 @@ function SearchResults({ courses }: { courses: Course[] }) {
     return (
       <EmptyState
         icon={<SearchX size={26} />}
-        title="Ничего не нашлось"
+        title="ничего не нашлось"
         text="Попробуйте другое слово — или загляните в направления ниже, там всего тринадцать курсов."
       />
     )
@@ -54,8 +54,8 @@ function SearchResults({ courses }: { courses: Course[] }) {
 
   return (
     <div className="flex flex-col gap-2.5 px-5">
-      <p className="px-1 pb-1 text-[13px] text-muted">
-        {courses.length === 1 ? 'Один курс' : `Курсов: ${courses.length}`}
+      <p className="label px-1 pb-1 text-dim">
+        {courses.length === 1 ? 'найден один курс' : `найдено курсов: ${courses.length}`}
       </p>
       {courses.map((course) => (
         <CourseRow key={course.id} course={course} />
@@ -79,17 +79,17 @@ function GroupedCourses({ courses }: { courses: Course[] }) {
             <div className="mb-3.5 flex items-center gap-3 px-5">
               <CategoryIcon category={category} />
               <div className="min-w-0">
-                <h2 className="text-[20px] leading-tight font-bold tracking-[-0.02em]">
+                <h2 className="text-[17px] leading-tight font-bold tracking-[0.14em] lowercase">
                   {category.title}
                 </h2>
-                <p className="mt-0.5 truncate text-[13.5px] text-muted">
+                <p className="mt-1 truncate text-[11.5px] tracking-[0.02em] text-dim">
                   {list.length === 1 ? '1 курс' : `${list.length} курса`} ·{' '}
                   {pluralLessons(totalLessons)}
                 </p>
               </div>
             </div>
 
-            <p className="mb-3 px-5 text-[14.5px] leading-relaxed text-muted">
+            <p className="mb-3.5 px-5 text-[13px] leading-[1.7] tracking-[0.02em] text-dim">
               {category.description}
             </p>
 

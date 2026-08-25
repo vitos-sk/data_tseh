@@ -2,7 +2,7 @@ import { cn } from '@/lib/cn'
 
 interface ScreenProps {
   children: React.ReactNode
-  /** Крупный заголовок в стиле iOS. Не задан — экран рисует шапку сам. */
+  /** Крупный строчный заголовок экрана. Не задан — экран рисует шапку сам. */
   title?: string
   subtitle?: string
   /**
@@ -16,7 +16,7 @@ interface ScreenProps {
 export function Screen({ children, title, subtitle, withTabBar = true, className }: ScreenProps) {
   return (
     <div
-      className={cn('min-h-full', className)}
+      className={cn('relative min-h-full', className)}
       style={{
         paddingTop: 'calc(var(--safe-top) + 8px)',
         paddingBottom: withTabBar
@@ -25,9 +25,18 @@ export function Screen({ children, title, subtitle, withTabBar = true, className
       }}
     >
       {title && (
-        <header className="px-5 pt-3 pb-5">
-          <h1 className="text-[32px] leading-[1.1] font-extrabold tracking-[-0.03em]">{title}</h1>
-          {subtitle && <p className="mt-1.5 text-[15px] text-muted">{subtitle}</p>}
+        <header className="px-5 pt-4 pb-6">
+          {/* Заголовок строчный, метка над ним — капсовая: тот самый контраст,
+              на котором держится вся типографика. */}
+          <p className="label mb-2.5 text-red">цех</p>
+          <h1 className="text-[28px] leading-[1.15] font-extrabold tracking-[0.14em] lowercase">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-2.5 text-[13px] leading-[1.7] tracking-[0.02em] text-dim">
+              {subtitle}
+            </p>
+          )}
         </header>
       )}
       {children}

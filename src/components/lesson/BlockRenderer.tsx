@@ -1,54 +1,64 @@
 import { AlertTriangle, CheckCircle2, Info } from 'lucide-react'
-import { CoverArt } from '@/components/course/CoverArt'
 import { COLORS } from '@/app/colors'
+import { CoverArt } from '@/components/course/CoverArt'
 import type { LessonBlock } from '@/modules/catalog'
 
 /**
  * Рендер одного блока урока. Новый вид контента добавляется сюда одной веткой —
  * экран урока при этом не меняется (docs/decisions/0004).
+ *
+ * Кегль и межстрочный интервал здесь выше, чем в списках: моноширинный шрифт
+ * читается плотнее пропорционального, и длинный текст без запаса по строке
+ * превращается в стену.
  */
 export function Block({ block }: { block: LessonBlock }) {
   switch (block.type) {
     case 'heading':
       return (
-        <h2 className="mt-3 text-[21px] leading-tight font-bold tracking-[-0.02em]">
+        <h2 className="mt-4 text-[17px] leading-tight font-bold tracking-[0.12em]">
+          <span className="mr-2 text-red">#</span>
           {block.text}
         </h2>
       )
 
     case 'text':
-      return <p className="text-[16.5px] leading-[1.6] text-white/85">{block.text}</p>
+      return (
+        <p className="text-[14.5px] leading-[1.85] tracking-[0.01em] text-muted">{block.text}</p>
+      )
 
     case 'image':
       return (
         <figure>
-          <CoverArt cover={block.cover} className="h-44 rounded-2xl" />
+          <CoverArt cover={block.cover} className="h-44 rounded-card" />
           {block.caption && (
-            <figcaption className="mt-2 px-1 text-[13.5px] leading-snug text-muted">
-              {block.caption}
-            </figcaption>
+            <figcaption className="label mt-2.5 px-1 text-dim">{block.caption}</figcaption>
           )}
         </figure>
       )
 
     case 'list':
       return block.ordered ? (
-        <ol className="flex flex-col gap-2.5">
+        <ol className="flex flex-col gap-3">
           {block.items.map((item, i) => (
             <li key={i} className="flex gap-3">
-              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-inset text-[13px] font-bold text-gold tabular-nums">
+              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[2px] border border-red/35 bg-red/10 text-[11px] font-bold text-red-bright tabular-nums">
                 {i + 1}
               </span>
-              <span className="flex-1 text-[16px] leading-[1.55] text-white/85">{item}</span>
+              <span className="flex-1 text-[14.5px] leading-[1.8] tracking-[0.01em] text-muted">
+                {item}
+              </span>
             </li>
           ))}
         </ol>
       ) : (
-        <ul className="flex flex-col gap-2.5">
+        <ul className="flex flex-col gap-3">
           {block.items.map((item, i) => (
             <li key={i} className="flex gap-3">
-              <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-gold" />
-              <span className="flex-1 text-[16px] leading-[1.55] text-white/85">{item}</span>
+              {/* Маркер — квадрат, а не точка: круглых форм в интерфейсе нет */}
+              <span className="mt-[10px] size-1.5 shrink-0 bg-red" />
+              <span className="flex-1 text-[14.5px] leading-[1.8] tracking-[0.01em] text-muted">
+                {item}
+              </span>
             </li>
           ))}
         </ul>
@@ -56,38 +66,38 @@ export function Block({ block }: { block: LessonBlock }) {
 
     case 'quote':
       return (
-        <blockquote className="border-l-2 border-gold pl-4">
-          <p className="text-[17px] leading-[1.5] font-medium text-white/90 italic">
-            {block.text}
-          </p>
-          {block.author && <cite className="mt-2 block text-[14px] text-muted not-italic">— {block.author}</cite>}
+        <blockquote className="border-l-2 border-red pl-4">
+          <p className="text-[15px] leading-[1.7] tracking-[0.02em] text-fg">{block.text}</p>
+          {block.author && (
+            <cite className="label mt-2.5 block text-dim not-italic">— {block.author}</cite>
+          )}
         </blockquote>
       )
 
     case 'callout': {
+      // Зелёный и жёлтый допущены только здесь и только как статус —
+      // остального цвета в интерфейсе нет.
       const TONE = {
-        info: { color: COLORS.blue, Icon: Info },
-        warning: { color: COLORS.orange, Icon: AlertTriangle },
-        success: { color: COLORS.green, Icon: CheckCircle2 },
+        info: { color: COLORS.redBright, Icon: Info },
+        warning: { color: COLORS.warn, Icon: AlertTriangle },
+        success: { color: COLORS.ok, Icon: CheckCircle2 },
       }[block.tone]
 
       return (
         <div
-          className="flex gap-3 rounded-[var(--radius-inset)] p-3.5"
-          style={{ backgroundColor: `${TONE.color}14` }}
+          className="flex gap-3 rounded-card border p-3.5"
+          style={{ backgroundColor: `${TONE.color}12`, borderColor: `${TONE.color}33` }}
         >
-          <TONE.Icon size={19} color={TONE.color} className="mt-0.5 shrink-0" />
-          <p className="text-[15.5px] leading-[1.5] text-white/85">{block.text}</p>
+          <TONE.Icon size={17} color={TONE.color} className="mt-0.5 shrink-0" />
+          <p className="text-[13.5px] leading-[1.7] tracking-[0.01em] text-muted">{block.text}</p>
         </div>
       )
     }
 
     case 'code':
       return (
-        <pre className="overflow-x-auto rounded-[var(--radius-inset)] bg-inset p-4">
-          <code className="font-mono text-[13.5px] leading-[1.6] whitespace-pre text-white/90">
-            {block.code}
-          </code>
+        <pre className="overflow-x-auto rounded-card border border-hairline bg-black/60 p-4">
+          <code className="text-[12.5px] leading-[1.7] whitespace-pre text-fg">{block.code}</code>
         </pre>
       )
   }
@@ -95,7 +105,7 @@ export function Block({ block }: { block: LessonBlock }) {
 
 export function BlockRenderer({ blocks }: { blocks: LessonBlock[] }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       {blocks.map((block, i) => (
         <Block key={i} block={block} />
       ))}

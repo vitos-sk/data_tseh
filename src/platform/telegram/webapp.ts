@@ -47,6 +47,9 @@ export function initTelegram(): () => void {
   app.expand()
   app.setHeaderColor(COLORS.bg)
   app.setBackgroundColor(COLORS.bg)
+  // Нижняя панель тоже наша: иначе под таб-баром остаётся полоса цвета
+  // темы клиента, и она светлее фона приложения. Метод появился в 7.10.
+  app.setBottomBarColor?.(COLORS.bg)
   // Свайп вниз внутри скролла не должен закрывать мини-апп. Метод появился в 7.7.
   app.disableVerticalSwipes?.()
 

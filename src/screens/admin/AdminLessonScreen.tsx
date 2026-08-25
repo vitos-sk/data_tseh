@@ -106,11 +106,11 @@ export function AdminLessonScreen() {
           type="button"
           onClick={() => navigate(adminPath(`/course/${id}`))}
           aria-label="К курсу"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-full bg-inset text-muted"
+          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
         >
           <ArrowLeft size={18} />
         </button>
-        <h1 className="min-w-0 flex-1 truncate text-[20px] font-bold tracking-[-0.02em]">
+        <h1 className="min-w-0 flex-1 truncate text-[17px] font-bold tracking-[0.1em] lowercase">
           {title || 'Без названия'}
         </h1>
       </div>
@@ -126,7 +126,7 @@ export function AdminLessonScreen() {
       </div>
 
       <section className="mt-8 px-5">
-        <h2 className="mb-2.5 px-1 text-[13px] font-semibold tracking-wide text-muted uppercase">
+        <h2 className="mb-2.5 px-1 text-[13px] font-semibold tracking-wide text-dim uppercase">
           Содержание
         </h2>
 
@@ -147,14 +147,14 @@ export function AdminLessonScreen() {
         <AddBlock onAdd={(kind) => setBlocks((prev) => [...prev, emptyBlock(kind)])} />
       </section>
 
-      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-cat-orange">{error}</p>}
+      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>}
 
       <div className="mt-7 px-5">
         <button
           type="button"
           onClick={() => void save()}
           disabled={state === 'saving'}
-          className="press w-full rounded-full bg-cta py-3.5 text-[16px] font-semibold text-bg disabled:opacity-40"
+          className="press w-full rounded-btn bg-red py-3.5 text-[16px] font-semibold text-white disabled:opacity-40"
         >
           {state === 'saving' ? 'Сохраняем…' : state === 'saved' ? 'Сохранено' : 'Сохранить урок'}
         </button>
@@ -181,7 +181,7 @@ function BlockCard({
   return (
     <div className="rounded-[var(--radius-card)] bg-surface p-3">
       <div className="mb-2.5 flex items-center gap-1.5">
-        <span className="flex-1 px-1 text-[12.5px] font-semibold tracking-wide text-muted uppercase">
+        <span className="flex-1 px-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
           {BLOCK_LABEL[block.type]}
         </span>
 
@@ -218,7 +218,7 @@ function IconAction({
       aria-label={label}
       onClick={onClick}
       disabled={disabled}
-      className="press flex size-8 shrink-0 items-center justify-center rounded-full bg-inset text-muted disabled:opacity-30"
+      className="press flex size-8 shrink-0 items-center justify-center rounded-btn bg-inset text-dim disabled:opacity-30"
     >
       {children}
     </button>
@@ -340,7 +340,7 @@ function BlockEditor({
           <button
             type="button"
             onClick={() => onChange({ ...block, items: [...block.items, ''] })}
-            className="press self-start text-[15px] font-medium text-gold"
+            className="press self-start text-[15px] font-medium text-red-bright"
           >
             + пункт
           </button>
@@ -379,7 +379,7 @@ function ImageBlockUpload({
       {url && <img src={url} alt="" className="h-32 w-full rounded-xl object-cover" />}
 
       <div className="flex gap-2">
-        <label className="press flex-1 cursor-pointer rounded-full bg-inset py-2.5 text-center text-[15px] font-medium text-muted">
+        <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center text-[15px] font-medium text-dim">
           {uploading ? 'Загружаем…' : url ? 'Заменить' : 'Загрузить картинку'}
           <input
             type="file"
@@ -405,14 +405,14 @@ function ImageBlockUpload({
           <button
             type="button"
             onClick={() => onChange(undefined)}
-            className="press rounded-full bg-inset px-4 py-2.5 text-[15px] font-medium text-muted"
+            className="press rounded-btn bg-inset px-4 py-2.5 text-[15px] font-medium text-dim"
           >
             Убрать
           </button>
         )}
       </div>
 
-      {error && <span className="text-[13px] text-cat-orange">{error}</span>}
+      {error && <span className="text-[13px] text-red-bright">{error}</span>}
     </div>
   )
 }
@@ -433,7 +433,7 @@ function AddBlock({ onAdd }: { onAdd: (kind: BlockKind) => void }) {
       <button
         type="button"
         onClick={() => onAdd(kind)}
-        className="press flex shrink-0 items-center gap-1.5 rounded-[var(--radius-inset)] bg-inset px-4 text-[15px] font-medium text-gold"
+        className="press flex shrink-0 items-center gap-1.5 rounded-btn bg-inset px-4 text-[15px] font-medium text-red-bright"
       >
         <Plus size={17} strokeWidth={2.6} />
         Блок

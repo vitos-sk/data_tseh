@@ -3,16 +3,19 @@ interface SectionHeaderProps {
   action?: { label: string; onClick: () => void }
 }
 
+/**
+ * Заголовок секции. Принудительно строчный и с широким трекингом:
+ * контраст к капсовым меткам держит весь тон интерфейса.
+ */
 export function SectionHeader({ title, action }: SectionHeaderProps) {
   return (
-    <div className="mb-3 flex items-baseline justify-between px-5">
-      <h2 className="text-[22px] leading-tight font-bold tracking-[-0.02em]">{title}</h2>
+    <div className="mb-3.5 flex items-baseline justify-between gap-3 px-5">
+      <h2 className="text-[20px] leading-tight font-bold tracking-[0.25em] lowercase">
+        <span className="mr-2 text-red">/</span>
+        {title}
+      </h2>
       {action && (
-        <button
-          type="button"
-          onClick={action.onClick}
-          className="press text-[15px] font-medium text-gold"
-        >
+        <button type="button" onClick={action.onClick} className="press label text-red-bright">
           {action.label}
         </button>
       )}

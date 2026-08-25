@@ -55,12 +55,12 @@ export function AdminCoursesScreen() {
   return (
     <div className="pt-5">
       <div className="mb-5 flex items-center justify-between gap-3 px-5">
-        <h1 className="text-[28px] leading-tight font-extrabold tracking-[-0.03em]">Курсы</h1>
+        <h1 className="text-[24px] leading-tight font-extrabold tracking-[0.14em] lowercase">курсы</h1>
         <button
           type="button"
           disabled={creating}
           onClick={() => void createCourse()}
-          className="press flex items-center gap-1.5 rounded-full bg-cta px-4 py-2.5 text-[15px] font-semibold text-bg disabled:opacity-40"
+          className="press flex items-center gap-1.5 rounded-btn bg-red px-4 py-2.5 text-[15px] font-semibold text-white disabled:opacity-40"
         >
           <Plus size={17} strokeWidth={2.6} />
           Создать
@@ -68,7 +68,7 @@ export function AdminCoursesScreen() {
       </div>
 
       {error && (
-        <p className="mb-4 px-5 text-[14px] leading-snug text-cat-orange">{error}</p>
+        <p className="mb-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>
       )}
 
       {loading && (
@@ -118,8 +118,8 @@ function Section({
   return (
     <section className="mb-7">
       <div className="mb-2.5 flex items-baseline gap-2 px-5">
-        <h2 className="text-[13px] font-semibold tracking-wide text-muted uppercase">{title}</h2>
-        {hint && <span className="text-[12.5px] text-muted">· {hint}</span>}
+        <h2 className="text-[13px] font-semibold tracking-wide text-dim uppercase">{title}</h2>
+        {hint && <span className="text-[12.5px] text-dim">· {hint}</span>}
       </div>
       <div className="flex flex-col gap-2.5 px-5">{children}</div>
     </section>
@@ -143,7 +143,7 @@ function AdminCourseRow({
 
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[16px] font-semibold">{course.title}</span>
-        <span className="mt-0.5 block truncate text-[13px] text-muted">
+        <span className="mt-0.5 block truncate text-[13px] text-dim">
           {pluralLessons(course.lessonsCount)} · {formatDuration(course.durationMin)}
         </span>
       </span>
