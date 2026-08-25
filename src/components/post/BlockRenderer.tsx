@@ -1,17 +1,20 @@
 import { AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 import { COLORS } from '@/app/colors'
-import { CoverArt } from '@/components/course/CoverArt'
-import type { LessonBlock } from '@/modules/catalog'
+import { CoverArt } from '@/components/post/CoverArt'
+import type { PostBlock } from '@/modules/catalog'
+import { CodeBlock } from './blocks/CodeBlock'
+import { CommandBlock } from './blocks/CommandBlock'
+import { PromptBlock } from './blocks/PromptBlock'
 
 /**
- * Рендер одного блока урока. Новый вид контента добавляется сюда одной веткой —
- * экран урока при этом не меняется (docs/decisions/0004).
+ * Рендер одного блока поста. Новый вид контента добавляется сюда одной веткой —
+ * экран поста при этом не меняется (docs/decisions/0004).
  *
  * Кегль и межстрочный интервал здесь выше, чем в списках: моноширинный шрифт
  * читается плотнее пропорционального, и длинный текст без запаса по строке
  * превращается в стену.
  */
-export function Block({ block }: { block: LessonBlock }) {
+export function Block({ block }: { block: PostBlock }) {
   switch (block.type) {
     case 'heading':
       return (
@@ -95,15 +98,17 @@ export function Block({ block }: { block: LessonBlock }) {
     }
 
     case 'code':
-      return (
-        <pre className="overflow-x-auto rounded-card border border-hairline bg-black/60 p-4">
-          <code className="text-[12.5px] leading-[1.7] whitespace-pre text-fg">{block.code}</code>
-        </pre>
-      )
+      return <CodeBlock lang={block.lang} code={block.code} />
+
+    case 'command':
+      return <CommandBlock command={block.command} note={block.note} />
+
+    case 'prompt':
+      return <PromptBlock text={block.text} title={block.title} />
   }
 }
 
-export function BlockRenderer({ blocks }: { blocks: LessonBlock[] }) {
+export function BlockRenderer({ blocks }: { blocks: PostBlock[] }) {
   return (
     <div className="flex flex-col gap-6">
       {blocks.map((block, i) => (

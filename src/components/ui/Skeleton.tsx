@@ -5,7 +5,7 @@ export function Skeleton({ className }: { className?: string }) {
 }
 
 /** Заглушка ленты курсов на время загрузки — повторяет геометрию карточки. */
-export function CourseCardSkeleton() {
+export function PostCardSkeleton() {
   return (
     <div className="glass rounded-card p-3">
       <Skeleton className="mb-3 h-40 w-full" />

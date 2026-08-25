@@ -3,10 +3,9 @@ import { createBrowserRouter } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ADMIN_SEGMENT } from '@/screens/admin/adminPath'
 import { CatalogScreen } from '@/screens/catalog/CatalogScreen'
-import { CourseScreen } from '@/screens/course/CourseScreen'
 import { ErrorScreen } from '@/screens/error/ErrorScreen'
 import { HomeScreen } from '@/screens/home/HomeScreen'
-import { LessonScreen } from '@/screens/lesson/LessonScreen'
+import { PostScreen } from '@/screens/post/PostScreen'
 import { ProfileScreen } from '@/screens/profile/ProfileScreen'
 import { SavedScreen } from '@/screens/saved/SavedScreen'
 
@@ -20,7 +19,7 @@ import { SavedScreen } from '@/screens/saved/SavedScreen'
  * в vercel.ts.
  *
  * Все экраны лежат под общим layout — таб-бар виден всегда, в том числе
- * на курсе и уроке: из чтения всегда можно уйти одним нажатием.
+ * на посте: из чтения всегда можно уйти одним нажатием.
  */
 /*
  * Админка грузится отдельным файлом и только по своему адресу: обычному
@@ -33,14 +32,11 @@ const AdminGate = lazy(() =>
 const AdminLayout = lazy(() =>
   import('@/screens/admin/AdminLayout').then((m) => ({ default: m.AdminLayout })),
 )
-const AdminCoursesScreen = lazy(() =>
-  import('@/screens/admin/AdminCoursesScreen').then((m) => ({ default: m.AdminCoursesScreen })),
+const AdminPostsScreen = lazy(() =>
+  import('@/screens/admin/AdminPostsScreen').then((m) => ({ default: m.AdminPostsScreen })),
 )
-const AdminCourseScreen = lazy(() =>
-  import('@/screens/admin/AdminCourseScreen').then((m) => ({ default: m.AdminCourseScreen })),
-)
-const AdminLessonScreen = lazy(() =>
-  import('@/screens/admin/AdminLessonScreen').then((m) => ({ default: m.AdminLessonScreen })),
+const AdminPostScreen = lazy(() =>
+  import('@/screens/admin/AdminPostScreen').then((m) => ({ default: m.AdminPostScreen })),
 )
 
 function AdminChunk({ children }: { children: React.ReactNode }) {
@@ -63,8 +59,7 @@ export const router = createBrowserRouter([
       { path: 'catalog', element: <CatalogScreen /> },
       { path: 'saved', element: <SavedScreen /> },
       { path: 'profile', element: <ProfileScreen /> },
-      { path: 'course/:slug', element: <CourseScreen /> },
-      { path: 'course/:slug/lesson/:lessonId', element: <LessonScreen /> },
+      { path: 'p/:slug', element: <PostScreen /> },
       { path: '*', element: <ErrorScreen /> },
     ],
   },
@@ -88,23 +83,15 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <AdminChunk>
-            <AdminCoursesScreen />
+            <AdminPostsScreen />
           </AdminChunk>
         ),
       },
       {
-        path: 'course/:id',
+        path: 'post/:id',
         element: (
           <AdminChunk>
-            <AdminCourseScreen />
-          </AdminChunk>
-        ),
-      },
-      {
-        path: 'course/:id/lesson/:lessonId',
-        element: (
-          <AdminChunk>
-            <AdminLessonScreen />
+            <AdminPostScreen />
           </AdminChunk>
         ),
       },

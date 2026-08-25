@@ -1,6 +1,6 @@
 import { BookmarkPlus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { CourseRow } from '@/components/course/CourseRow'
+import { PostRow } from '@/components/post/PostRow'
 import { Screen } from '@/components/layout/Screen'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -15,15 +15,15 @@ export function SavedScreen() {
 
   // Экран — то самое место, где сходятся «Личное» и «Каталог»:
   // стор хранит только id, содержимое приезжает из репозитория.
-  const { data: courses, loading } = useAsync(
-    () => catalogRepository.getCoursesByIds(saved),
+  const { data: posts, loading } = useAsync(
+    () => catalogRepository.getPostsByIds(saved),
     [saved.join(',')],
   )
 
   const busy = !hydrated || loading
 
   return (
-    <Screen title="закладки" subtitle="Курсы, к которым вы хотите вернуться">
+    <Screen title="закладки" subtitle="Посты, к которым вы хотите вернуться">
       {busy && (
         <div className="flex flex-col gap-2.5 px-5">
           {Array.from({ length: 3 }, (_, i) => (
@@ -36,7 +36,7 @@ export function SavedScreen() {
         <EmptyState
           icon={<BookmarkPlus size={24} />}
           title="пока ничего не сохранено"
-          text="Нажмите на закладку у любого курса — он появится здесь и не потеряется."
+          text="Нажмите на закладку у любого поста — он появится здесь и не потеряется."
           action={
             <button
               type="button"
@@ -51,7 +51,7 @@ export function SavedScreen() {
 
       {!busy && saved.length > 0 && (
         <div className="flex flex-col gap-2.5 px-5">
-          {courses?.map((course) => <CourseRow key={course.id} course={course} />)}
+          {posts?.map((post) => <PostRow key={post.id} post={post} />)}
         </div>
       )}
     </Screen>

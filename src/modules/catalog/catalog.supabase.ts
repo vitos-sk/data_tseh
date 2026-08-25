@@ -3,13 +3,12 @@ import type { CatalogRepository } from './catalog.port'
 import type {
   Category,
   CategoryId,
-  Course,
-  CourseBadge,
-  CourseCover,
-  CourseLevel,
   IconName,
-  Lesson,
-  LessonBlock,
+  Post,
+  PostBadge,
+  PostBlock,
+  PostCover,
+  PostDetail,
 } from './catalog.types'
 
 /* — как выглядят строки в базе — */
@@ -24,35 +23,26 @@ interface CategoryRow {
   sort_order: number
 }
 
-interface CourseRow {
+interface PostRow {
   id: string
   slug: string
   title: string
   subtitle: string
   category_id: string
-  cover: Partial<CourseCover> | null
-  level: string
+  cover: Partial<PostCover> | null
   badges: string[] | null
-  author: string
-  description: string
+  read_min: number
   published: boolean
   sort_order: number
-  lessons_count: number
-  duration_min: number
 }
 
-interface LessonRow {
-  id: string
-  course_id: string
-  position: number
-  title: string
-  duration_min: number
-  blocks: LessonBlock[] | null
+interface PostDetailRow extends PostRow {
+  blocks: PostBlock[] | null
 }
 
 /* — перевод в доменные типы — */
 
-const FALLBACK_COVER: CourseCover = { from: '#3B9EFF', to: '#1E3A8A', pattern: 'grid' }
+const FALLBACK_COVER: PostCover = { from: '#F04A1E', to: '#2A0E0A', pattern: 'grid' }
 
 function toCategory(row: CategoryRow): Category {
   return {
@@ -65,7 +55,7 @@ function toCategory(row: CategoryRow): Category {
   }
 }
 
-function toCourse(row: CourseRow): Course {
+function toPost(row: PostRow): Post {
   return {
     id: row.id,
     slug: row.slug,
@@ -73,31 +63,23 @@ function toCourse(row: CourseRow): Course {
     subtitle: row.subtitle,
     categoryId: row.category_id as CategoryId,
     // Значения из jsonb приходят как есть, поэтому подстраховываемся:
-    // курс с испорченной обложкой должен рисоваться, а не ронять экран.
-    cover: { ...FALLBACK_COVER, ...(row.cover ?? {}) } as CourseCover,
-    level: row.level as CourseLevel,
-    durationMin: row.duration_min,
-    lessonsCount: row.lessons_count,
-    badges: (row.badges ?? []) as CourseBadge[],
-    author: row.author,
-    description: row.description,
+    // пост с испорченной обложкой должен рисоваться, а не ронять экран.
+    cover: { ...FALLBACK_COVER, ...(row.cover ?? {}) } as PostCover,
+    badges: (row.badges ?? []) as PostBadge[],
+    readMin: row.read_min,
   }
 }
 
-function toLesson(row: LessonRow): Lesson {
-  return {
-    id: row.id,
-    courseId: row.course_id,
-    order: row.position,
-    title: row.title,
-    durationMin: row.duration_min,
-    blocks: row.blocks ?? [],
-  }
+function toPostDetail(row: PostDetailRow): PostDetail {
+  return { ...toPost(row), blocks: row.blocks ?? [] }
 }
 
-/** Поля представления перечислены явно: `select('*')` ломается при добавлении колонок. */
-const COURSE_FIELDS =
-  'id, slug, title, subtitle, category_id, cover, level, badges, author, description, published, sort_order, lessons_count, duration_min'
+/** Поля перечислены явно: `select('*')` ломается при добавлении колонок. */
+const POST_FIELDS =
+  'id, slug, title, subtitle, category_id, cover, badges, read_min, published, sort_order'
+
+/** Содержимое тянем только при открытии поста — в списках оно не нужно. */
+const POST_DETAIL_FIELDS = `${POST_FIELDS}, blocks`
 
 function fail(context: string, error: { message: string }): never {
   throw new Error(`Supabase: ${context} — ${error.message}`)
@@ -106,7 +88,7 @@ function fail(context: string, error: { message: string }): never {
 /**
  * Каталог из базы. Черновики сюда не попадают: их отсекает RLS,
  * поэтому фильтровать по published в запросах не нужно — но мы всё равно
- * делаем это явно, чтобы админский вход не подмешал незаконченные курсы
+ * делаем это явно, чтобы админский вход не подмешал незаконченные посты
  * в публичные экраны.
  */
 export const supabaseCatalog: CatalogRepository = {
@@ -120,10 +102,10 @@ export const supabaseCatalog: CatalogRepository = {
     return (data as CategoryRow[]).map(toCategory)
   },
 
-  async getCourses(categoryId?: CategoryId) {
+  async getPosts(categoryId?: CategoryId) {
     let query = requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
+      .from('posts')
+      .select(POST_FIELDS)
       .eq('published', true)
       .order('sort_order')
       .order('created_at', { ascending: false })
@@ -131,87 +113,59 @@ export const supabaseCatalog: CatalogRepository = {
     if (categoryId) query = query.eq('category_id', categoryId)
 
     const { data, error } = await query
-    if (error) fail('курсы', error)
-    return (data as CourseRow[]).map(toCourse)
+    if (error) fail('посты', error)
+    return (data as PostRow[]).map(toPost)
   },
 
-  async searchCourses(query: string) {
+  async searchPosts(query: string) {
     const needle = query.trim()
-    if (!needle) return this.getCourses()
+    if (!needle) return this.getPosts()
 
     // or() требует экранирования запятых и скобок — они ломают синтаксис фильтра
     const safe = needle.replaceAll(/[,()]/g, ' ')
     const { data, error } = await requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
+      .from('posts')
+      .select(POST_FIELDS)
       .eq('published', true)
-      .or(
-        `title.ilike.%${safe}%,subtitle.ilike.%${safe}%,description.ilike.%${safe}%,author.ilike.%${safe}%`,
-      )
+      .or(`title.ilike.%${safe}%,subtitle.ilike.%${safe}%`)
       .order('sort_order')
 
     if (error) fail('поиск', error)
-    return (data as CourseRow[]).map(toCourse)
+    return (data as PostRow[]).map(toPost)
   },
 
-  async getCoursesByIds(ids: string[]) {
+  async getPostsByIds(ids: string[]) {
     if (ids.length === 0) return []
 
-    const { data, error } = await requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
-      .in('id', ids)
+    const { data, error } = await requireSupabase().from('posts').select(POST_FIELDS).in('id', ids)
 
-    if (error) fail('курсы по списку', error)
+    if (error) fail('посты по списку', error)
 
     // Порядок закладок задаёт пользователь, а база возвращает свой —
     // восстанавливаем исходный.
-    const byId = new Map((data as CourseRow[]).map((row) => [row.id, toCourse(row)]))
-    return ids.map((id) => byId.get(id)).filter((course): course is Course => Boolean(course))
+    const byId = new Map((data as PostRow[]).map((row) => [row.id, toPost(row)]))
+    return ids.map((id) => byId.get(id)).filter((post): post is Post => Boolean(post))
   },
 
-  async getCourseById(id: string) {
+  async getPostById(id: string) {
     const { data, error } = await requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
+      .from('posts')
+      .select(POST_FIELDS)
       .eq('id', id)
       .maybeSingle()
 
-    if (error) fail('курс', error)
-    return data ? toCourse(data as CourseRow) : null
+    if (error) fail('пост', error)
+    return data ? toPost(data as PostRow) : null
   },
 
-  async getCourseBySlug(slug: string) {
+  async getPost(slug: string) {
     const { data, error } = await requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
+      .from('posts')
+      .select(POST_DETAIL_FIELDS)
       .eq('slug', slug)
       .maybeSingle()
 
-    if (error) fail('курс по адресу', error)
-    return data ? toCourse(data as CourseRow) : null
-  },
-
-  async getLessons(courseId: string) {
-    const { data, error } = await requireSupabase()
-      .from('lessons')
-      .select('id, course_id, position, title, duration_min, blocks')
-      .eq('course_id', courseId)
-      .order('position')
-
-    if (error) fail('уроки', error)
-    return (data as LessonRow[]).map(toLesson)
-  },
-
-  async getLesson(courseId: string, lessonId: string) {
-    const { data, error } = await requireSupabase()
-      .from('lessons')
-      .select('id, course_id, position, title, duration_min, blocks')
-      .eq('course_id', courseId)
-      .eq('id', lessonId)
-      .maybeSingle()
-
-    if (error) fail('урок', error)
-    return data ? toLesson(data as LessonRow) : null
+    if (error) fail('пост по адресу', error)
+    return data ? toPostDetail(data as PostDetailRow) : null
   },
 }

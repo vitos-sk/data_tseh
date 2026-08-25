@@ -1,29 +1,29 @@
 import { SearchX } from 'lucide-react'
 import { useState } from 'react'
-import { CategoryIcon } from '@/components/course/CategoryIcon'
-import { CourseRow } from '@/components/course/CourseRow'
+import { CategoryIcon } from '@/components/post/CategoryIcon'
+import { PostRow } from '@/components/post/PostRow'
 import { Screen } from '@/components/layout/Screen'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SearchField } from '@/components/ui/SearchField'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { CATEGORIES } from '@/data/categories'
-import { pluralLessons } from '@/lib/format'
+import { pluralPosts } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
-import { catalogRepository, type Course } from '@/modules/catalog'
+import { catalogRepository, type Post } from '@/modules/catalog'
 
 export function CatalogScreen() {
   const [query, setQuery] = useState('')
   const searching = query.trim().length > 0
 
-  const { data: courses, loading } = useAsync(
-    () => (searching ? catalogRepository.searchCourses(query) : catalogRepository.getCourses()),
+  const { data: posts, loading } = useAsync(
+    () => (searching ? catalogRepository.searchPosts(query) : catalogRepository.getPosts()),
     [query],
   )
 
   return (
-    <Screen title="каталог" subtitle="Пять направлений, короткие курсы без воды">
+    <Screen title="каталог" subtitle="Пять направлений, посты без воды">
       <div className="mb-6 px-5">
-        <SearchField value={query} onChange={setQuery} placeholder="найти курс или тему" />
+        <SearchField value={query} onChange={setQuery} placeholder="найти пост или тему" />
       </div>
 
       {loading && (
@@ -34,20 +34,20 @@ export function CatalogScreen() {
         </div>
       )}
 
-      {!loading && searching && <SearchResults courses={courses ?? []} />}
-      {!loading && !searching && <GroupedCourses courses={courses ?? []} />}
+      {!loading && searching && <SearchResults posts={posts ?? []} />}
+      {!loading && !searching && <GroupedPosts posts={posts ?? []} />}
     </Screen>
   )
 }
 
 /** Результаты поиска — плоским списком: группировка тут только мешает. */
-function SearchResults({ courses }: { courses: Course[] }) {
-  if (courses.length === 0) {
+function SearchResults({ posts }: { posts: Post[] }) {
+  if (posts.length === 0) {
     return (
       <EmptyState
         icon={<SearchX size={26} />}
         title="ничего не нашлось"
-        text="Попробуйте другое слово — или загляните в направления ниже, там всего тринадцать курсов."
+        text="Попробуйте другое слово — или загляните в направления ниже."
       />
     )
   }
@@ -55,24 +55,22 @@ function SearchResults({ courses }: { courses: Course[] }) {
   return (
     <div className="flex flex-col gap-2.5 px-5">
       <p className="label px-1 pb-1 text-dim">
-        {courses.length === 1 ? 'найден один курс' : `найдено курсов: ${courses.length}`}
+        {posts.length === 1 ? 'найден один пост' : `найдено постов: ${posts.length}`}
       </p>
-      {courses.map((course) => (
-        <CourseRow key={course.id} course={course} />
+      {posts.map((post) => (
+        <PostRow key={post.id} post={post} />
       ))}
     </div>
   )
 }
 
-/** Обычный вид каталога: курсы, сгруппированные по направлениям. */
-function GroupedCourses({ courses }: { courses: Course[] }) {
+/** Обычный вид каталога: посты, сгруппированные по направлениям. */
+function GroupedPosts({ posts }: { posts: Post[] }) {
   return (
     <div className="flex flex-col gap-9">
       {CATEGORIES.map((category) => {
-        const list = courses.filter((c) => c.categoryId === category.id)
+        const list = posts.filter((p) => p.categoryId === category.id)
         if (list.length === 0) return null
-
-        const totalLessons = list.reduce((sum, c) => sum + c.lessonsCount, 0)
 
         return (
           <section key={category.id}>
@@ -83,8 +81,7 @@ function GroupedCourses({ courses }: { courses: Course[] }) {
                   {category.title}
                 </h2>
                 <p className="mt-1 truncate text-[11.5px] tracking-[0.02em] text-dim">
-                  {list.length === 1 ? '1 курс' : `${list.length} курса`} ·{' '}
-                  {pluralLessons(totalLessons)}
+                  {pluralPosts(list.length)}
                 </p>
               </div>
             </div>
@@ -94,8 +91,8 @@ function GroupedCourses({ courses }: { courses: Course[] }) {
             </p>
 
             <div className="flex flex-col gap-2.5 px-5">
-              {list.map((course) => (
-                <CourseRow key={course.id} course={course} />
+              {list.map((post) => (
+                <PostRow key={post.id} post={post} />
               ))}
             </div>
           </section>

@@ -1,11 +1,10 @@
 import { AtSign, Bell, Globe, Info, MessageCircle, Sparkles, Trash2 } from 'lucide-react'
 import { Screen } from '@/components/layout/Screen'
 import { APP_VERSION, AUTHOR } from '@/data/profile'
-import { lessonWord } from '@/lib/format'
 import { useLibraryStore } from '@/modules/library'
 import { useSettingsStore } from '@/modules/settings/settings.store'
 import { getTelegramUser, openLink } from '@/platform/telegram'
-import { ConfirmRow, LinkRow, RowGroup, StatTile, ToggleRow } from './ProfileRows'
+import { ConfirmRow, LinkRow, RowGroup, ToggleRow } from './ProfileRows'
 
 const LINK_ICONS: Record<string, React.ReactNode> = {
   channel: <MessageCircle size={17} />,
@@ -14,16 +13,12 @@ const LINK_ICONS: Record<string, React.ReactNode> = {
 
 export function ProfileScreen() {
   const user = getTelegramUser()
-  const completed = useLibraryStore((s) => s.completed)
-  const savedCount = useLibraryStore((s) => s.saved.length)
+  const clearSaved = useLibraryStore((s) => s.clearSaved)
 
   const reminders = useSettingsStore((s) => s.reminders)
   const toggleReminders = useSettingsStore((s) => s.toggleReminders)
   const reducedMotion = useSettingsStore((s) => s.reducedMotion)
   const toggleReducedMotion = useSettingsStore((s) => s.toggleReducedMotion)
-
-  const lessonsDone = Object.values(completed).reduce((sum, ids) => sum + ids.length, 0)
-  const coursesStarted = Object.values(completed).filter((ids) => ids.length > 0).length
 
   const displayName = user
     ? [user.first_name, user.last_name].filter(Boolean).join(' ')
@@ -53,12 +48,6 @@ export function ProfileScreen() {
             </p>
           </div>
         </div>
-
-        <div className="mt-5 flex gap-2.5">
-          <StatTile value={String(lessonsDone)} label={lessonWord(lessonsDone)} />
-          <StatTile value={String(coursesStarted)} label="начато" />
-          <StatTile value={String(savedCount)} label="закладок" />
-        </div>
       </section>
 
       <div className="flex flex-col gap-7">
@@ -74,7 +63,7 @@ export function ProfileScreen() {
           <ToggleRow
             icon={<Bell size={17} />}
             label="Напоминания"
-            hint="Раз в неделю подтолкнём вернуться к начатому курсу"
+            hint="Раз в неделю подтолкнём вернуться к сохранённому"
             checked={reminders}
             onChange={toggleReminders}
           />
@@ -114,9 +103,9 @@ export function ProfileScreen() {
         <RowGroup>
           <ConfirmRow
             icon={<Trash2 size={17} />}
-            label="Сбросить прогресс"
-            confirmLabel="Удалить весь прогресс?"
-            onConfirm={() => useLibraryStore.setState({ completed: {}, lastOpened: null })}
+            label="Очистить закладки"
+            confirmLabel="Удалить все закладки?"
+            onConfirm={clearSaved}
           />
         </RowGroup>
 

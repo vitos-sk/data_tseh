@@ -1,36 +1,36 @@
 import { requireSupabase } from '@/platform/supabase'
-import type { Category, Course, CourseCover, Lesson, LessonBlock } from '@/modules/catalog'
+import { estimateReadMin } from '@/modules/catalog'
+import type { Category, PostBlock, PostCover, PostDetail } from '@/modules/catalog'
 
-/** Курс глазами админки: с флагом черновика и счётчиками. */
-export interface AdminCourse extends Course {
+/** Пост глазами админки: с флагом черновика и позицией в каталоге. */
+export interface AdminPost extends PostDetail {
   published: boolean
   sortOrder: number
 }
 
-export interface CourseDraft {
+/** Поля, которые правит редактор. Время чтения сюда не входит — оно считается. */
+export interface PostDraft {
   slug: string
   title: string
   subtitle: string
   categoryId: string
-  cover: CourseCover
-  level: Course['level']
+  cover: PostCover
   badges: string[]
-  author: string
-  description: string
+  blocks: PostBlock[]
   published: boolean
 }
 
-const COURSE_FIELDS =
-  'id, slug, title, subtitle, category_id, cover, level, badges, author, description, published, sort_order, lessons_count, duration_min'
+const POST_FIELDS =
+  'id, slug, title, subtitle, category_id, cover, badges, blocks, read_min, published, sort_order'
 
-const FALLBACK_COVER: CourseCover = { from: '#3B9EFF', to: '#1E3A8A', pattern: 'grid' }
+const FALLBACK_COVER: PostCover = { from: '#F04A1E', to: '#2A0E0A', pattern: 'grid' }
 
 function fail(context: string, error: { message: string }): never {
   throw new Error(`${context}: ${error.message}`)
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function toAdminCourse(row: any): AdminCourse {
+function toAdminPost(row: any): AdminPost {
   return {
     id: row.id,
     slug: row.slug,
@@ -38,25 +38,11 @@ function toAdminCourse(row: any): AdminCourse {
     subtitle: row.subtitle ?? '',
     categoryId: row.category_id,
     cover: { ...FALLBACK_COVER, ...(row.cover ?? {}) },
-    level: row.level,
-    durationMin: row.duration_min ?? 0,
-    lessonsCount: row.lessons_count ?? 0,
     badges: row.badges ?? [],
-    author: row.author ?? '',
-    description: row.description ?? '',
+    blocks: row.blocks ?? [],
+    readMin: row.read_min ?? 1,
     published: row.published,
     sortOrder: row.sort_order ?? 0,
-  }
-}
-
-function toLesson(row: any): Lesson {
-  return {
-    id: row.id,
-    courseId: row.course_id,
-    order: row.position,
-    title: row.title ?? '',
-    durationMin: row.duration_min ?? 5,
-    blocks: row.blocks ?? [],
   }
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -67,120 +53,81 @@ function toLesson(row: any): Lesson {
  * Интерфейс не должен быть единственным замком на двери.
  */
 export const adminRepository = {
-  /** Все курсы, включая черновики. */
-  async listCourses(): Promise<AdminCourse[]> {
+  /**
+   * Все посты, включая черновики. Содержимое не тянем: список показывает
+   * только заголовки, а блоки всех постов — это мегабайты.
+   */
+  async listPosts(): Promise<Omit<AdminPost, 'blocks'>[]> {
     const { data, error } = await requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
+      .from('posts')
+      .select('id, slug, title, subtitle, category_id, cover, badges, read_min, published, sort_order')
       .order('sort_order')
 
-    if (error) fail('Не удалось загрузить курсы', error)
-    return (data ?? []).map(toAdminCourse)
+    if (error) fail('Не удалось загрузить посты', error)
+    return (data ?? []).map(toAdminPost)
   },
 
-  async getCourse(id: string): Promise<AdminCourse | null> {
+  async getPost(id: string): Promise<AdminPost | null> {
     const { data, error } = await requireSupabase()
-      .from('course_with_stats')
-      .select(COURSE_FIELDS)
+      .from('posts')
+      .select(POST_FIELDS)
       .eq('id', id)
       .maybeSingle()
 
-    if (error) fail('Не удалось загрузить курс', error)
-    return data ? toAdminCourse(data) : null
+    if (error) fail('Не удалось загрузить пост', error)
+    return data ? toAdminPost(data) : null
   },
 
-  async createCourse(draft: CourseDraft): Promise<AdminCourse> {
+  async createPost(categoryId: string): Promise<AdminPost> {
     const { data, error } = await requireSupabase()
-      .from('courses')
+      .from('posts')
       .insert({
-        slug: draft.slug,
-        title: draft.title,
-        subtitle: draft.subtitle,
-        category_id: draft.categoryId,
-        cover: draft.cover,
-        level: draft.level,
-        badges: draft.badges,
-        author: draft.author,
-        description: draft.description,
-        published: draft.published,
+        slug: `novyy-post-${Date.now().toString(36)}`,
+        title: 'Новый пост',
+        subtitle: '',
+        category_id: categoryId,
+        cover: FALLBACK_COVER,
+        badges: [],
+        blocks: [],
+        read_min: 1,
+        published: false,
       })
-      .select(
-        'id, slug, title, subtitle, category_id, cover, level, badges, author, description, published, sort_order',
-      )
+      .select(POST_FIELDS)
       .single()
 
-    if (error) fail('Не удалось создать курс', error)
-    return toAdminCourse(data)
+    if (error) fail('Не удалось создать пост', error)
+    return toAdminPost(data)
   },
 
-  async updateCourse(id: string, patch: Partial<CourseDraft>): Promise<void> {
+  /**
+   * Сохранение поста. Время чтения пересчитывается здесь и только здесь —
+   * единственная точка записи, поэтому разъехаться с содержанием оно не может.
+   */
+  async updatePost(id: string, patch: Partial<PostDraft>): Promise<number | null> {
+    const readMin = patch.blocks ? estimateReadMin(patch.blocks) : null
+
     const { error } = await requireSupabase()
-      .from('courses')
+      .from('posts')
       .update({
         ...(patch.slug !== undefined && { slug: patch.slug }),
         ...(patch.title !== undefined && { title: patch.title }),
         ...(patch.subtitle !== undefined && { subtitle: patch.subtitle }),
         ...(patch.categoryId !== undefined && { category_id: patch.categoryId }),
         ...(patch.cover !== undefined && { cover: patch.cover }),
-        ...(patch.level !== undefined && { level: patch.level }),
         ...(patch.badges !== undefined && { badges: patch.badges }),
-        ...(patch.author !== undefined && { author: patch.author }),
-        ...(patch.description !== undefined && { description: patch.description }),
+        ...(patch.blocks !== undefined && { blocks: patch.blocks }),
+        ...(readMin !== null && { read_min: readMin }),
         ...(patch.published !== undefined && { published: patch.published }),
       })
       .eq('id', id)
 
-    if (error) fail('Не удалось сохранить курс', error)
+    if (error) fail('Не удалось сохранить пост', error)
+    return readMin
   },
 
-  async deleteCourse(id: string): Promise<void> {
-    // Уроки удалятся сами: внешний ключ объявлен с on delete cascade.
-    const { error } = await requireSupabase().from('courses').delete().eq('id', id)
-    if (error) fail('Не удалось удалить курс', error)
-  },
-
-  async listLessons(courseId: string): Promise<Lesson[]> {
-    const { data, error } = await requireSupabase()
-      .from('lessons')
-      .select('id, course_id, position, title, duration_min, blocks')
-      .eq('course_id', courseId)
-      .order('position')
-
-    if (error) fail('Не удалось загрузить уроки', error)
-    return (data ?? []).map(toLesson)
-  },
-
-  async createLesson(courseId: string, position: number): Promise<Lesson> {
-    const { data, error } = await requireSupabase()
-      .from('lessons')
-      .insert({ course_id: courseId, position, title: 'Новый урок', duration_min: 5, blocks: [] })
-      .select('id, course_id, position, title, duration_min, blocks')
-      .single()
-
-    if (error) fail('Не удалось создать урок', error)
-    return toLesson(data)
-  },
-
-  async updateLesson(
-    id: string,
-    patch: { title?: string; durationMin?: number; blocks?: LessonBlock[]; position?: number },
-  ): Promise<void> {
-    const { error } = await requireSupabase()
-      .from('lessons')
-      .update({
-        ...(patch.title !== undefined && { title: patch.title }),
-        ...(patch.durationMin !== undefined && { duration_min: patch.durationMin }),
-        ...(patch.blocks !== undefined && { blocks: patch.blocks }),
-        ...(patch.position !== undefined && { position: patch.position }),
-      })
-      .eq('id', id)
-
-    if (error) fail('Не удалось сохранить урок', error)
-  },
-
-  async deleteLesson(id: string): Promise<void> {
-    const { error } = await requireSupabase().from('lessons').delete().eq('id', id)
-    if (error) fail('Не удалось удалить урок', error)
+  async deletePost(id: string): Promise<void> {
+    const { error } = await requireSupabase().from('posts').delete().eq('id', id)
+    if (error) fail('Не удалось удалить пост', error)
   },
 
   async listCategories(): Promise<Category[]> {
@@ -201,7 +148,7 @@ export const adminRepository = {
     }))
   },
 
-  /** Загружает обложку в bucket covers и возвращает публичную ссылку. */
+  /** Загружает картинку в bucket covers и возвращает публичную ссылку. */
   async uploadCover(file: File): Promise<string> {
     const client = requireSupabase()
     const extension = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'

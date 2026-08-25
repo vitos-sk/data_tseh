@@ -112,17 +112,6 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
   )
 }
 
-export function StatTile({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="flex-1 rounded-card border border-hairline bg-surface px-2 py-3.5 text-center">
-      <p className="text-[22px] leading-none font-extrabold text-red-bright tabular-nums">
-        {value}
-      </p>
-      <p className="label mt-2.5 leading-tight text-dim">{label}</p>
-    </div>
-  )
-}
-
 interface ConfirmRowProps {
   icon: React.ReactNode
   label: string

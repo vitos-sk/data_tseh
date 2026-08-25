@@ -1,8 +1,8 @@
 import { cn } from '@/lib/cn'
-import type { CourseCover } from '@/modules/catalog'
+import type { PostCover } from '@/modules/catalog'
 
 interface CoverArtProps {
-  cover: CourseCover
+  cover: PostCover
   className?: string
   children?: React.ReactNode
 }
@@ -73,7 +73,7 @@ function toRedAxis(hex: string): string {
   return `#${out.map((c) => c.toString(16).padStart(2, '0')).join('')}`
 }
 
-function Pattern({ pattern }: { pattern: CourseCover['pattern'] }) {
+function Pattern({ pattern }: { pattern: PostCover['pattern'] }) {
   const common = 'absolute inset-0 h-full w-full'
   // Узор красный, а не белый: белые линии выбивались бы из палитры
   // сильнее, чем сама обложка.

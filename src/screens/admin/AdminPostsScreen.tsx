@@ -1,25 +1,27 @@
 import { FileText, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CoverArt } from '@/components/course/CoverArt'
+import { CoverArt } from '@/components/post/CoverArt'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { formatDuration, pluralLessons } from '@/lib/format'
+import { formatReadTime } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
-import { adminRepository } from '@/modules/admin/admin.repository'
+import { adminRepository, type AdminPost } from '@/modules/admin/admin.repository'
 import { adminPath } from './adminPath'
 
-export function AdminCoursesScreen() {
+type PostRowData = Omit<AdminPost, 'blocks'>
+
+export function AdminPostsScreen() {
   const navigate = useNavigate()
   const [reloadKey, setReloadKey] = useState(0)
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: courses, loading } = useAsync(() => adminRepository.listCourses(), [reloadKey])
+  const { data: posts, loading } = useAsync(() => adminRepository.listPosts(), [reloadKey])
   const { data: categories } = useAsync(() => adminRepository.listCategories(), [])
 
-  const createCourse = async () => {
+  const createPost = async () => {
     if (!categories || categories.length === 0) {
       setError('Сначала нужна хотя бы одна категория')
       return
@@ -28,19 +30,8 @@ export function AdminCoursesScreen() {
     setError(null)
 
     try {
-      const course = await adminRepository.createCourse({
-        slug: `novyy-kurs-${Date.now().toString(36)}`,
-        title: 'Новый курс',
-        subtitle: '',
-        categoryId: categories[0].id,
-        cover: { from: '#3B9EFF', to: '#1E3A8A', pattern: 'grid' },
-        level: 'any',
-        badges: [],
-        author: '',
-        description: '',
-        published: false,
-      })
-      navigate(adminPath(`/course/${course.id}`))
+      const post = await adminRepository.createPost(categories[0].id)
+      navigate(adminPath(`/post/${post.id}`))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не получилось')
       setReloadKey((k) => k + 1)
@@ -49,17 +40,19 @@ export function AdminCoursesScreen() {
     }
   }
 
-  const drafts = courses?.filter((c) => !c.published) ?? []
-  const published = courses?.filter((c) => c.published) ?? []
+  const drafts = posts?.filter((p) => !p.published) ?? []
+  const published = posts?.filter((p) => p.published) ?? []
 
   return (
     <div className="pt-5">
       <div className="mb-5 flex items-center justify-between gap-3 px-5">
-        <h1 className="text-[24px] leading-tight font-extrabold tracking-[0.14em] lowercase">курсы</h1>
+        <h1 className="text-[24px] leading-tight font-extrabold tracking-[0.14em] lowercase">
+          посты
+        </h1>
         <button
           type="button"
           disabled={creating}
-          onClick={() => void createCourse()}
+          onClick={() => void createPost()}
           className="press flex items-center gap-1.5 rounded-btn bg-red px-4 py-2.5 text-[15px] font-semibold text-white disabled:opacity-40"
         >
           <Plus size={17} strokeWidth={2.6} />
@@ -67,9 +60,7 @@ export function AdminCoursesScreen() {
         </button>
       </div>
 
-      {error && (
-        <p className="mb-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>
-      )}
+      {error && <p className="mb-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>}
 
       {loading && (
         <div className="flex flex-col gap-2.5 px-5">
@@ -79,26 +70,26 @@ export function AdminCoursesScreen() {
         </div>
       )}
 
-      {!loading && courses?.length === 0 && (
+      {!loading && posts?.length === 0 && (
         <EmptyState
           icon={<FileText size={26} />}
-          title="Курсов пока нет"
+          title="Постов пока нет"
           text="Создайте первый — он появится в приложении, когда вы его опубликуете."
         />
       )}
 
       {!loading && drafts.length > 0 && (
         <Section title="Черновики" hint="Видны только вам">
-          {drafts.map((course) => (
-            <AdminCourseRow key={course.id} course={course} />
+          {drafts.map((post) => (
+            <AdminPostRow key={post.id} post={post} />
           ))}
         </Section>
       )}
 
       {!loading && published.length > 0 && (
         <Section title="Опубликованы">
-          {published.map((course) => (
-            <AdminCourseRow key={course.id} course={course} />
+          {published.map((post) => (
+            <AdminPostRow key={post.id} post={post} />
           ))}
         </Section>
       )}
@@ -126,29 +117,25 @@ function Section({
   )
 }
 
-function AdminCourseRow({
-  course,
-}: {
-  course: import('@/modules/admin/admin.repository').AdminCourse
-}) {
+function AdminPostRow({ post }: { post: PostRowData }) {
   const navigate = useNavigate()
 
   return (
     <button
       type="button"
-      onClick={() => navigate(adminPath(`/course/${course.id}`))}
+      onClick={() => navigate(adminPath(`/post/${post.id}`))}
       className="press flex items-center gap-3.5 rounded-[var(--radius-card)] bg-surface p-3 text-left"
     >
-      <CoverArt cover={course.cover} className="size-12 shrink-0 rounded-xl" />
+      <CoverArt cover={post.cover} className="size-12 shrink-0 rounded-xl" />
 
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[16px] font-semibold">{course.title}</span>
+        <span className="block truncate text-[16px] font-semibold">{post.title}</span>
         <span className="mt-0.5 block truncate text-[13px] text-dim">
-          {pluralLessons(course.lessonsCount)} · {formatDuration(course.durationMin)}
+          {formatReadTime(post.readMin)}
         </span>
       </span>
 
-      {!course.published && <Badge tone="neutral">Черновик</Badge>}
+      {!post.published && <Badge tone="neutral">Черновик</Badge>}
     </button>
   )
 }

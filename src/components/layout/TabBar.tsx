@@ -12,7 +12,7 @@ const TABS = [
 ] as const
 
 /**
- * Нижний таб-бар. Виден на всех экранах, включая курс и урок: из чтения
+ * Нижний таб-бар. Виден на всех экранах, включая открытый пост: из чтения
  * всегда можно уйти одним нажатием, не разыскивая кнопку «назад».
  *
  * Позиционирование absolute, а не fixed: на ПК приложение живёт в колонке
@@ -22,9 +22,9 @@ export function TabBar() {
   const savedCount = useLibraryStore((s) => s.saved.length)
   const { pathname } = useLocation()
 
-  // Курс и урок — продолжение каталога: подсвечиваем его, чтобы панель
+  // Открытый пост — продолжение каталога: подсвечиваем его, чтобы панель
   // не выглядела «погасшей» во время чтения.
-  const courseIsOpen = pathname.startsWith('/course')
+  const postIsOpen = pathname.startsWith('/p/')
 
   return (
     <nav
@@ -42,14 +42,14 @@ export function TabBar() {
                 cn(
                   'relative flex h-full flex-col items-center justify-center gap-1.5',
                   'transition-colors duration-200',
-                  isActive || (courseIsOpen && to === '/catalog')
+                  isActive || (postIsOpen && to === '/catalog')
                     ? 'text-red-bright'
                     : 'text-dim',
                 )
               }
             >
               {({ isActive }) => {
-                const active = isActive || (courseIsOpen && to === '/catalog')
+                const active = isActive || (postIsOpen && to === '/catalog')
                 return (
                   <>
                     {/* Красная риска сверху: у активной вкладки «горит» контакт */}

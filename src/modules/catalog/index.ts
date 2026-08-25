@@ -1,14 +1,14 @@
 export { catalogRepository } from './catalog.repository'
+export { estimateReadMin } from './readTime'
 export type { CatalogRepository } from './catalog.port'
 export type {
   Category,
   CategoryId,
-  Course,
-  CourseBadge,
-  CourseCover,
-  CourseLevel,
-  CourseWithProgress,
   IconName,
-  Lesson,
-  LessonBlock,
+  Post,
+  PostBadge,
+  PostBlock,
+  PostBlockKind,
+  PostCover,
+  PostDetail,
 } from './catalog.types'

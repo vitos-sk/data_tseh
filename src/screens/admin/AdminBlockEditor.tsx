@@ -1,34 +1,60 @@
-import { ArrowLeft, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Skeleton } from '@/components/ui/Skeleton'
-import { useAsync } from '@/lib/useAsync'
+import {
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Code2,
+  Copy,
+  Heading,
+  Image as ImageIcon,
+  List,
+  Quote,
+  Sparkles,
+  Terminal,
+  Trash2,
+  Type,
+} from 'lucide-react'
+import { useState } from 'react'
 import { adminRepository } from '@/modules/admin/admin.repository'
-import type { LessonBlock } from '@/modules/catalog'
-import { adminPath } from './adminPath'
-import { ChoiceRow, Field, NumberInput, Select, TextArea, TextInput } from './AdminFields'
+import type { PostBlock, PostBlockKind } from '@/modules/catalog'
+import { ChoiceRow, Select, TextArea, TextInput } from './AdminFields'
 
-type BlockKind = LessonBlock['type']
-
-const BLOCK_LABEL: Record<BlockKind, string> = {
-  heading: 'Заголовок',
-  text: 'Абзац',
-  image: 'Картинка',
-  list: 'Список',
-  quote: 'Цитата',
-  callout: 'Врезка',
-  code: 'Код',
+const BLOCK_META: Record<PostBlockKind, { label: string; Icon: typeof Type }> = {
+  heading: { label: 'Заголовок', Icon: Heading },
+  text: { label: 'Абзац', Icon: Type },
+  list: { label: 'Список', Icon: List },
+  code: { label: 'Код', Icon: Code2 },
+  command: { label: 'Команда', Icon: Terminal },
+  prompt: { label: 'Промт', Icon: Sparkles },
+  callout: { label: 'Врезка', Icon: AlertCircle },
+  quote: { label: 'Цитата', Icon: Quote },
+  image: { label: 'Картинка', Icon: ImageIcon },
 }
 
+/*
+ * Порядок в панели добавления — по частоте использования, а не по алфавиту:
+ * текст и заголовок ставят в каждый пост, картинку — раз в десять постов.
+ */
+const BLOCK_ORDER: PostBlockKind[] = [
+  'text',
+  'heading',
+  'list',
+  'code',
+  'command',
+  'prompt',
+  'callout',
+  'quote',
+  'image',
+]
+
 /** Пустая заготовка блока каждого вида. */
-function emptyBlock(kind: BlockKind): LessonBlock {
+export function emptyBlock(kind: PostBlockKind): PostBlock {
   switch (kind) {
     case 'heading':
       return { type: 'heading', text: '' }
     case 'text':
       return { type: 'text', text: '' }
     case 'image':
-      return { type: 'image', cover: { from: '#3B9EFF', to: '#1E3A8A', pattern: 'grid' } }
+      return { type: 'image', cover: { from: '#F04A1E', to: '#2A0E0A', pattern: 'grid' } }
     case 'list':
       return { type: 'list', items: [''] }
     case 'quote':
@@ -36,134 +62,15 @@ function emptyBlock(kind: BlockKind): LessonBlock {
     case 'callout':
       return { type: 'callout', tone: 'info', text: '' }
     case 'code':
-      return { type: 'code', lang: 'text', code: '' }
+      return { type: 'code', lang: 'bash', code: '' }
+    case 'command':
+      return { type: 'command', command: '' }
+    case 'prompt':
+      return { type: 'prompt', text: '' }
   }
 }
 
-export function AdminLessonScreen() {
-  const { id = '', lessonId = '' } = useParams()
-  const navigate = useNavigate()
-
-  const { data: lessons, loading } = useAsync(() => adminRepository.listLessons(id), [id])
-  const lesson = lessons?.find((l) => l.id === lessonId) ?? null
-
-  const [title, setTitle] = useState('')
-  const [durationMin, setDurationMin] = useState(5)
-  const [blocks, setBlocks] = useState<LessonBlock[]>([])
-  const [ready, setReady] = useState(false)
-  const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!lesson || ready) return
-    setTitle(lesson.title)
-    setDurationMin(lesson.durationMin)
-    setBlocks(lesson.blocks)
-    setReady(true)
-  }, [lesson, ready])
-
-  const save = async () => {
-    setState('saving')
-    setError(null)
-    try {
-      await adminRepository.updateLesson(lessonId, { title, durationMin, blocks })
-      setState('saved')
-    } catch (e) {
-      setState('error')
-      setError(e instanceof Error ? e.message : 'Не удалось сохранить')
-    }
-  }
-
-  const replaceBlock = (index: number, block: LessonBlock) => {
-    setBlocks((prev) => prev.map((b, i) => (i === index ? block : b)))
-    setState('idle')
-  }
-
-  const moveBlock = (index: number, delta: number) => {
-    setBlocks((prev) => {
-      const target = index + delta
-      if (target < 0 || target >= prev.length) return prev
-      const next = [...prev]
-      ;[next[index], next[target]] = [next[target], next[index]]
-      return next
-    })
-    setState('idle')
-  }
-
-  if (loading || !ready) {
-    return (
-      <div className="flex flex-col gap-3 p-5">
-        <Skeleton className="h-9 w-2/3" />
-        <Skeleton className="h-24 w-full rounded-2xl" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="pt-4">
-      <div className="mb-5 flex items-center gap-3 px-5">
-        <button
-          type="button"
-          onClick={() => navigate(adminPath(`/course/${id}`))}
-          aria-label="К курсу"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <h1 className="min-w-0 flex-1 truncate text-[17px] font-bold tracking-[0.1em] lowercase">
-          {title || 'Без названия'}
-        </h1>
-      </div>
-
-      <div className="flex flex-col gap-5 px-5">
-        <Field label="Название урока">
-          <TextInput value={title} onChange={setTitle} />
-        </Field>
-
-        <Field label="Время чтения, минут" hint="Из этих минут складывается длительность курса">
-          <NumberInput value={durationMin} onChange={setDurationMin} />
-        </Field>
-      </div>
-
-      <section className="mt-8 px-5">
-        <h2 className="mb-2.5 px-1 text-[13px] font-semibold tracking-wide text-dim uppercase">
-          Содержание
-        </h2>
-
-        <div className="flex flex-col gap-3">
-          {blocks.map((block, index) => (
-            <BlockCard
-              key={index}
-              block={block}
-              index={index}
-              total={blocks.length}
-              onChange={(next) => replaceBlock(index, next)}
-              onMove={(delta) => moveBlock(index, delta)}
-              onDelete={() => setBlocks((prev) => prev.filter((_, i) => i !== index))}
-            />
-          ))}
-        </div>
-
-        <AddBlock onAdd={(kind) => setBlocks((prev) => [...prev, emptyBlock(kind)])} />
-      </section>
-
-      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>}
-
-      <div className="mt-7 px-5">
-        <button
-          type="button"
-          onClick={() => void save()}
-          disabled={state === 'saving'}
-          className="press w-full rounded-btn bg-red py-3.5 text-[16px] font-semibold text-white disabled:opacity-40"
-        >
-          {state === 'saving' ? 'Сохраняем…' : state === 'saved' ? 'Сохранено' : 'Сохранить урок'}
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function BlockCard({
+export function BlockCard({
   block,
   index,
   total,
@@ -171,18 +78,21 @@ function BlockCard({
   onMove,
   onDelete,
 }: {
-  block: LessonBlock
+  block: PostBlock
   index: number
   total: number
-  onChange: (block: LessonBlock) => void
+  onChange: (block: PostBlock) => void
   onMove: (delta: number) => void
   onDelete: () => void
 }) {
+  const { label, Icon } = BLOCK_META[block.type]
+
   return (
     <div className="rounded-[var(--radius-card)] bg-surface p-3">
       <div className="mb-2.5 flex items-center gap-1.5">
-        <span className="flex-1 px-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
-          {BLOCK_LABEL[block.type]}
+        <Icon size={14} className="shrink-0 text-red-bright" />
+        <span className="flex-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
+          {label}
         </span>
 
         <IconAction label="Выше" disabled={index === 0} onClick={() => onMove(-1)}>
@@ -229,8 +139,8 @@ function BlockEditor({
   block,
   onChange,
 }: {
-  block: LessonBlock
-  onChange: (block: LessonBlock) => void
+  block: PostBlock
+  onChange: (block: PostBlock) => void
 }) {
   switch (block.type) {
     case 'heading':
@@ -293,17 +203,65 @@ function BlockEditor({
     case 'code':
       return (
         <div className="flex flex-col gap-2">
-          <TextInput
+          <Select
             value={block.lang}
             onChange={(lang) => onChange({ ...block, lang })}
-            placeholder="Язык: bash, ts, text"
+            options={[
+              { value: 'bash', label: 'bash' },
+              { value: 'ts', label: 'ts' },
+              { value: 'tsx', label: 'tsx' },
+              { value: 'js', label: 'js' },
+              { value: 'json', label: 'json' },
+              { value: 'sql', label: 'sql' },
+              { value: 'python', label: 'python' },
+              { value: 'text', label: 'без языка' },
+            ]}
           />
           <TextArea
             value={block.code}
             onChange={(code) => onChange({ ...block, code })}
-            placeholder="Код"
-            rows={5}
+            placeholder="Код целиком — так, как его нужно скопировать"
+            rows={6}
           />
+        </div>
+      )
+
+    case 'command':
+      return (
+        <div className="flex flex-col gap-2">
+          {/* Многострочное поле и для однострочной команды: длинные npx-строки
+              не помещаются в input, а обрезанный хвост править вслепую нельзя. */}
+          <TextArea
+            value={block.command}
+            onChange={(command) => onChange({ ...block, command })}
+            placeholder="npx create-video@latest"
+            rows={2}
+          />
+          <TextInput
+            value={block.note ?? ''}
+            onChange={(note) => onChange({ ...block, note: note || undefined })}
+            placeholder="Что делает — можно не указывать"
+          />
+        </div>
+      )
+
+    case 'prompt':
+      return (
+        <div className="flex flex-col gap-2">
+          <TextInput
+            value={block.title ?? ''}
+            onChange={(title) => onChange({ ...block, title: title || undefined })}
+            placeholder="Название промта — можно не указывать"
+          />
+          <TextArea
+            value={block.text}
+            onChange={(text) => onChange({ ...block, text })}
+            placeholder="Текст промта целиком"
+            rows={6}
+          />
+          <span className="px-1 text-[12.5px] text-dim tabular-nums">
+            {block.text.length} символов
+          </span>
         </div>
       )
 
@@ -417,27 +375,45 @@ function ImageBlockUpload({
   )
 }
 
-function AddBlock({ onAdd }: { onAdd: (kind: BlockKind) => void }) {
-  const [kind, setKind] = useState<BlockKind>('text')
-
+/**
+ * Панель добавления: все девять видов сразу, кнопками с иконками.
+ * Выпадающий список прятал редкие блоки за два действия — а промт и команду
+ * ставят так же часто, как абзац.
+ */
+export function AddBlockPanel({ onAdd }: { onAdd: (kind: PostBlockKind) => void }) {
   return (
-    <div className="mt-3 flex gap-2">
-      <Select
-        value={kind}
-        onChange={setKind}
-        options={(Object.keys(BLOCK_LABEL) as BlockKind[]).map((value) => ({
-          value,
-          label: BLOCK_LABEL[value],
-        }))}
-      />
-      <button
-        type="button"
-        onClick={() => onAdd(kind)}
-        className="press flex shrink-0 items-center gap-1.5 rounded-btn bg-inset px-4 text-[15px] font-medium text-red-bright"
-      >
-        <Plus size={17} strokeWidth={2.6} />
-        Блок
-      </button>
+    <div className="mt-4 rounded-[var(--radius-card)] border border-hairline bg-surface/50 p-3">
+      <p className="mb-2.5 px-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
+        Добавить блок
+      </p>
+
+      <div className="grid grid-cols-3 gap-2">
+        {BLOCK_ORDER.map((kind) => {
+          const { label, Icon } = BLOCK_META[kind]
+          const copyable = kind === 'code' || kind === 'command' || kind === 'prompt'
+
+          return (
+            <button
+              key={kind}
+              type="button"
+              onClick={() => onAdd(kind)}
+              className={`press flex flex-col items-center gap-1.5 rounded-btn border py-3 text-[13px] font-medium ${
+                copyable
+                  ? 'border-red/35 bg-red/[0.06] text-red-bright'
+                  : 'border-hairline bg-inset text-dim'
+              }`}
+            >
+              <Icon size={17} />
+              {label}
+            </button>
+          )
+        })}
+      </div>
+
+      <p className="mt-2.5 flex items-center gap-1.5 px-1 text-[12.5px] text-dim">
+        <Copy size={12} className="shrink-0" />
+        красным — блоки, которые читатель копирует одним нажатием
+      </p>
     </div>
   )
 }

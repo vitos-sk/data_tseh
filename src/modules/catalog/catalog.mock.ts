@@ -1,8 +1,7 @@
 import { CATEGORIES } from '@/data/categories'
-import { COURSES } from '@/data/courses'
-import { LESSONS_BY_COURSE } from '@/data/lessons'
+import { POSTS } from '@/data/posts'
 import type { CatalogRepository } from './catalog.port'
-import type { Category, CategoryId, Course, Lesson } from './catalog.types'
+import type { Category, CategoryId, Post, PostDetail } from './catalog.types'
 
 /**
  * Каталог из файлов в src/data. Работает без сети и без ключей —
@@ -21,53 +20,55 @@ function respond<T>(value: T): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), LATENCY_MS))
 }
 
+/** Списочные методы отдают пост без содержания — ровно как это делает база. */
+function brief({ blocks, ...post }: PostDetail): Post {
+  void blocks
+  return post
+}
+
 export const mockCatalog: CatalogRepository = {
   getCategories(): Promise<Category[]> {
     return respond(CATEGORIES)
   },
 
-  /** Все курсы; при указанной категории — только её. */
-  getCourses(categoryId?: CategoryId): Promise<Course[]> {
-    const list = categoryId ? COURSES.filter((c) => c.categoryId === categoryId) : COURSES
-    return respond(list)
+  /** Все посты; при указанной категории — только её. */
+  getPosts(categoryId?: CategoryId): Promise<Post[]> {
+    const list = categoryId ? POSTS.filter((p) => p.categoryId === categoryId) : POSTS
+    return respond(list.map(brief))
   },
 
   /**
-   * Поиск по названию, подзаголовку, описанию и автору.
+   * Поиск по названию и подзаголовку.
    * Регистр и буква «ё» не должны мешать: нормализуем и то, и другое.
    */
-  searchCourses(query: string): Promise<Course[]> {
+  searchPosts(query: string): Promise<Post[]> {
     const needle = normalize(query)
-    if (!needle) return respond(COURSES)
+    if (!needle) return respond(POSTS.map(brief))
 
     return respond(
-      COURSES.filter((course) =>
-        normalize(
-          `${course.title} ${course.subtitle} ${course.description} ${course.author}`,
-        ).includes(needle),
+      POSTS.filter((post) => normalize(`${post.title} ${post.subtitle}`).includes(needle)).map(
+        brief,
       ),
     )
   },
 
-  getCoursesByIds(ids: string[]): Promise<Course[]> {
-    const index = new Map(COURSES.map((c) => [c.id, c]))
+  getPostsByIds(ids: string[]): Promise<Post[]> {
+    const index = new Map(POSTS.map((p) => [p.id, p]))
     // Порядок сохраняем тот, в котором пришли id: это порядок добавления в закладки.
-    return respond(ids.map((id) => index.get(id)).filter((c): c is Course => Boolean(c)))
+    return respond(
+      ids
+        .map((id) => index.get(id))
+        .filter((p): p is PostDetail => Boolean(p))
+        .map(brief),
+    )
   },
 
-  getCourseById(id: string): Promise<Course | null> {
-    return respond(COURSES.find((c) => c.id === id) ?? null)
+  getPostById(id: string): Promise<Post | null> {
+    const post = POSTS.find((p) => p.id === id)
+    return respond(post ? brief(post) : null)
   },
 
-  getCourseBySlug(slug: string): Promise<Course | null> {
-    return respond(COURSES.find((c) => c.slug === slug) ?? null)
-  },
-
-  getLessons(courseId: string): Promise<Lesson[]> {
-    return respond(LESSONS_BY_COURSE[courseId] ?? [])
-  },
-
-  getLesson(courseId: string, lessonId: string): Promise<Lesson | null> {
-    return respond(LESSONS_BY_COURSE[courseId]?.find((l) => l.id === lessonId) ?? null)
+  getPost(slug: string): Promise<PostDetail | null> {
+    return respond(POSTS.find((p) => p.slug === slug) ?? null)
   },
 }
