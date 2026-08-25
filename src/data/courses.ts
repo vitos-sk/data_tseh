@@ -6,6 +6,27 @@ import type { Course } from '@/modules/catalog/catalog.types'
  */
 export const COURSES: Course[] = [
   {
+    id: 'c-remotion',
+    slug: 'remotion-video-kodom',
+    title: 'Remotion: видео кодом',
+    subtitle: 'Ролик собирается из React, а не из дорожек в монтажке',
+    categoryId: 'ai',
+    cover: {
+      from: '#F04A1E',
+      to: '#2A0E0A',
+      pattern: 'grid',
+      imageUrl:
+        'https://kyutpzudsiifhdxysyff.supabase.co/storage/v1/object/public/covers/remotion-video-kodom.jpg',
+    },
+    level: 'any',
+    durationMin: 44,
+    lessonsCount: 7,
+    badges: ['new', 'free'],
+    author: 'Цех',
+    description:
+      'Видео как веб-страница: каждый кадр рисует код, а Remotion склеивает их в MP4. Разбираем, из чего состоит композиция, как считается время, почему анимация — это формула, и как поручить всю сборку Claude Code. К концу курса вы отрендерите свой первый ролик.',
+  },
+  {
     id: 'c-git',
     slug: 'git-bez-straha',
     title: 'Git без страха',

@@ -1,15 +1,37 @@
 /**
  * Превращает моковый каталог в SQL для Supabase.
  * Запуск: npm run seed:sql — результат кладётся в supabase/seed.sql,
- * его нужно выполнить в SQL Editor проекта.
+ * его нужно выполнить в SQL Editor проекта или через npm run db:apply.
  *
  * Скрипт идемпотентен: повторный прогон обновит существующие строки
  * по slug и не наплодит дублей.
+ *
+ * Один курс: npm run seed:sql -- --only <slug>. Тогда файл называется
+ * supabase/seed-<slug>.sql и трогает только этот курс. Это нужно потому,
+ * что база живёт своей жизнью: часть каталога правят через админку, и
+ * заливать поверх неё все моки разом — значит затереть чужую работу.
  */
 import { writeFileSync } from 'node:fs'
 import { CATEGORIES } from '../src/data/categories'
 import { COURSES } from '../src/data/courses'
 import { LESSONS_BY_COURSE } from '../src/data/lessons'
+
+const onlyIndex = process.argv.indexOf('--only')
+const onlySlug = onlyIndex === -1 ? null : process.argv[onlyIndex + 1]
+
+if (onlyIndex !== -1 && !onlySlug) {
+  console.error('После --only нужен slug курса: npm run seed:sql -- --only git-bez-straha')
+  process.exit(1)
+}
+
+// sort_order считаем по полному списку — иначе выгрузка одного курса
+// сдвинула бы его в начало каталога.
+const selected = onlySlug ? COURSES.filter((c) => c.slug === onlySlug) : COURSES
+
+if (selected.length === 0) {
+  console.error(`Курса со slug «${onlySlug}» нет в src/data/courses.ts`)
+  process.exit(1)
+}
 
 const q = (value: string) => `'${value.replaceAll("'", "''")}'`
 const json = (value: unknown) => `${q(JSON.stringify(value))}::jsonb`
@@ -22,10 +44,12 @@ const lines: string[] = [
   '',
   'begin;',
   '',
-  '-- ── категории ──',
 ]
 
-CATEGORIES.forEach((category, index) => {
+// Категории — часть общего каркаса, при выгрузке одного курса они уже есть в базе.
+if (!onlySlug) lines.push('-- ── категории ──')
+
+;(onlySlug ? [] : CATEGORIES).forEach((category, index) => {
   lines.push(
     `insert into public.categories (id, title, chip, accent, icon, description, sort_order) values (`,
     `  ${q(category.id)}, ${q(category.title)}, ${q(category.chip)}, ${q(category.accent)},`,
@@ -39,7 +63,8 @@ CATEGORIES.forEach((category, index) => {
 
 lines.push('-- ── курсы и уроки ──')
 
-COURSES.forEach((course, index) => {
+selected.forEach((course) => {
+  const index = COURSES.indexOf(course)
   const lessons = LESSONS_BY_COURSE[course.id] ?? []
 
   lines.push(
@@ -80,8 +105,14 @@ COURSES.forEach((course, index) => {
 
 lines.push('commit;', '')
 
-writeFileSync('supabase/seed.sql', lines.join('\n'), 'utf8')
+const target = onlySlug ? `supabase/seed-${onlySlug}.sql` : 'supabase/seed.sql'
+const lessonsCount = selected.reduce(
+  (sum, course) => sum + (LESSONS_BY_COURSE[course.id]?.length ?? 0),
+  0,
+)
+
+writeFileSync(target, lines.join('\n'), 'utf8')
 console.log(
-  `supabase/seed.sql готов: категорий ${CATEGORIES.length}, курсов ${COURSES.length}, ` +
-    `уроков ${Object.values(LESSONS_BY_COURSE).reduce((sum, l) => sum + l.length, 0)}`,
+  `${target} готов: категорий ${onlySlug ? 0 : CATEGORIES.length}, ` +
+    `курсов ${selected.length}, уроков ${lessonsCount}`,
 )
