@@ -8,17 +8,19 @@ interface CoverArtProps {
 }
 
 /**
- * Обложка курса. Настоящих картинок пока нет, поэтому рисуем градиент
- * с геометрическим узором — весит ноль и не требует загрузки.
+ * Обложка курса. Если картинки нет — рисуем градиент с геометрическим
+ * узором: весит ноль и не требует загрузки.
  *
- * Поверх всего идёт CRT-сетка (утилита crt): 1px краски, 3px пустоты.
- * Она приводит любую обложку — хоть градиент, хоть загруженную картинку —
- * к общему тону экрана старого монитора.
+ * Фотографии показываем как есть, без обработки: ни обесцвечивания,
+ * ни CRT-сетки, ни затемнения. Сверху только 1% красного — намёк на
+ * палитру, который не мешает разглядеть саму картинку.
  */
 export function CoverArt({ cover, className, children }: CoverArtProps) {
+  const hasImage = Boolean(cover.imageUrl)
+
   return (
     <div
-      className={cn('crt relative overflow-hidden', className)}
+      className={cn('relative overflow-hidden', !hasImage && 'crt', className)}
       style={{
         backgroundImage: `linear-gradient(140deg, ${toRedAxis(cover.from)} 0%, ${toRedAxis(cover.to)} 100%)`,
       }}
@@ -31,18 +33,18 @@ export function CoverArt({ cover, className, children }: CoverArtProps) {
             src={cover.imageUrl}
             alt=""
             loading="lazy"
-            className="absolute inset-0 size-full object-cover grayscale"
+            className="absolute inset-0 size-full object-cover"
           />
-          {/* Тонирование обесцвеченной картинки: загруженная в админку
-              фотография тоже обязана остаться в палитре. */}
-          <div className="absolute inset-0 bg-red mix-blend-color" />
+          <div className="absolute inset-0 bg-red opacity-[0.01]" />
         </>
       ) : (
-        <Pattern pattern={cover.pattern} />
+        <>
+          <Pattern pattern={cover.pattern} />
+          {/* Лёгкое затемнение только под узором: у бейджей и кнопок
+              есть собственный фон, поэтому обложке хватает 10%. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-black/10" />
+        </>
       )}
-      {/* Лёгкое затемнение: собственный фон есть у бейджей и кнопок,
-          поэтому обложке хватает 10% — картинка остаётся видимой. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-black/10" />
       {children}
     </div>
   )

@@ -30,10 +30,10 @@ export function ProfileScreen() {
       <section className="mb-7 px-5">
         <div className="flex items-center gap-4">
           {user?.photo_url ? (
-            <div className="crt size-16 shrink-0 overflow-hidden rounded-avatar border border-red/30">
-              <img src={user.photo_url} alt="" className="size-full object-cover grayscale" />
-              {/* Тонирование: аватар тоже остаётся в палитре */}
-              <div className="absolute inset-0 bg-red mix-blend-color" />
+            <div className="relative size-16 shrink-0 overflow-hidden rounded-avatar border border-red/30">
+              <img src={user.photo_url} alt="" className="size-full object-cover" />
+              {/* Намёк на палитру: 1% красного, фото остаётся собой */}
+              <div className="absolute inset-0 bg-red opacity-[0.01]" />
             </div>
           ) : (
             <div className="crt flex size-16 shrink-0 items-center justify-center rounded-avatar border border-red/30 bg-inset text-[22px] font-bold text-red-bright">
