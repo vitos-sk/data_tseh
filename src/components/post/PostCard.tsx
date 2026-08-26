@@ -8,8 +8,6 @@ import { CategoryIcon } from './CategoryIcon'
 import { CoverArt } from './CoverArt'
 import { SaveButton } from './SaveButton'
 
-const BADGE_LABEL = { new: 'Новое', free: 'Бесплатно' } as const
-
 /** Крупная карточка для ленты на Главной. */
 export function PostCard({ post }: { post: Post }) {
   const navigate = useNavigate()
@@ -24,14 +22,7 @@ export function PostCard({ post }: { post: Post }) {
       className="glass glass-live cursor-pointer rounded-card p-2.5"
     >
       <CoverArt cover={post.cover} className="h-44 rounded-[2px]">
-        <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2">
-          <div className="flex flex-wrap gap-1.5">
-            {post.badges.map((badge) => (
-              <Badge key={badge} tone={badge === 'new' ? 'red' : 'glass'}>
-                {BADGE_LABEL[badge]}
-              </Badge>
-            ))}
-          </div>
+        <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-end">
           <SaveButton postId={post.id} />
         </div>
 

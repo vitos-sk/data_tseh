@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { CoverArt } from '@/components/post/CoverArt'
 import { adminRepository, type PostDraft } from '@/modules/admin/admin.repository'
 import type { Category, PostCover } from '@/modules/catalog'
-import { ChoiceRow, Field, Select, TextInput, ToggleChips } from './AdminFields'
+import { ChoiceRow, Field, Select, TextInput } from './AdminFields'
 
 /**
  * Метаданные поста. Свёрнуты по умолчанию и лежат под содержанием: адрес и
@@ -56,17 +56,6 @@ export function AdminPostSettings({
               value={draft.categoryId}
               onChange={(categoryId) => onPatch({ categoryId })}
               options={categories.map((c) => ({ value: c.id, label: c.title }))}
-            />
-          </Field>
-
-          <Field label="Бейджи">
-            <ToggleChips
-              values={draft.badges}
-              onChange={(badges) => onPatch({ badges })}
-              options={[
-                { value: 'new', label: 'Новое' },
-                { value: 'free', label: 'Бесплатно' },
-              ]}
             />
           </Field>
 

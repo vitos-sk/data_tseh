@@ -35,8 +35,6 @@ if (selected.length === 0) {
 
 const q = (value: string) => `'${value.replaceAll("'", "''")}'`
 const json = (value: unknown) => `${q(JSON.stringify(value))}::jsonb`
-const arr = (values: string[]) =>
-  values.length === 0 ? `'{}'` : `array[${values.map(q).join(', ')}]`
 
 const lines: string[] = [
   '-- Начальные данные каталога. Сгенерировано scripts/generate-seed.ts —',
@@ -70,12 +68,12 @@ selected.forEach((post) => {
   const readMin = estimateReadMin(post.blocks)
 
   lines.push(
-    `insert into public.posts (slug, title, subtitle, category_id, cover, badges, blocks, read_min, published, sort_order) values (`,
+    `insert into public.posts (slug, title, subtitle, category_id, cover, blocks, read_min, published, sort_order) values (`,
     `  ${q(post.slug)}, ${q(post.title)}, ${q(post.subtitle)}, ${q(post.categoryId)},`,
-    `  ${json(post.cover)}, ${arr(post.badges)}, ${json(post.blocks)}, ${readMin}, true, ${index}`,
+    `  ${json(post.cover)}, ${json(post.blocks)}, ${readMin}, true, ${index}`,
     `) on conflict (slug) do update set`,
     `  title = excluded.title, subtitle = excluded.subtitle, category_id = excluded.category_id,`,
-    `  cover = excluded.cover, badges = excluded.badges, blocks = excluded.blocks,`,
+    `  cover = excluded.cover, blocks = excluded.blocks,`,
     `  read_min = excluded.read_min, sort_order = excluded.sort_order;`,
     '',
   )

@@ -39,7 +39,6 @@ export function AdminPostScreen() {
       subtitle: post.subtitle,
       categoryId: post.categoryId,
       cover: post.cover,
-      badges: post.badges,
       blocks: post.blocks,
       published: post.published,
     })

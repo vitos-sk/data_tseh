@@ -6,7 +6,6 @@ export type {
   CategoryId,
   IconName,
   Post,
-  PostBadge,
   PostBlock,
   PostBlockKind,
   PostCover,

@@ -2,8 +2,6 @@ import type { AccentName } from '@/app/colors'
 
 export type CategoryId = 'code' | 'ai' | 'business' | 'craft' | 'tips'
 
-export type PostBadge = 'new' | 'free'
-
 /** Название иконки lucide-react. Держим строкой, чтобы данные оставались данными. */
 export type IconName = 'Code2' | 'Sparkles' | 'Briefcase' | 'Hammer' | 'Zap'
 
@@ -62,7 +60,6 @@ export interface Post {
   subtitle: string
   categoryId: CategoryId
   cover: PostCover
-  badges: PostBadge[]
   /** Время чтения в минутах. Считается из объёма текста при сохранении. */
   readMin: number
 }

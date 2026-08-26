@@ -6,6 +6,128 @@ import type { PostDetail } from '@/modules/catalog/catalog.types'
  */
 export const POSTS: PostDetail[] = [
   {
+    id: "c-apple-design",
+    slug: "apple-design-skill",
+    title: "Интерфейс по правилам Apple",
+    subtitle: "Скилл apple-design находит в готовом приложении то, что вы перестали замечать",
+    categoryId: "ai",
+    cover: {
+      from: "#4C6FFF",
+      to: "#0B1026",
+      pattern: "waves"
+    },
+    readMin: 3,
+    blocks: [
+      {
+        type: "text",
+        text: "apple-design — сторонний скилл для Claude Code, собранный по открытым докладам Apple о дизайне. Он объясняет Claude, какими должны быть кнопки, жесты и анимации, чтобы интерфейс отвечал на касание сразу, а не через полсекунды."
+      },
+      {
+        type: "text",
+        text: "Главное правило: не начинайте с пустого проекта. Ставьте скилл в приложение, которое уже работает, — тогда Claude найдёт то, к чему вы привыкли и на что больше не смотрите."
+      },
+      {
+        type: "callout",
+        tone: "info",
+        text: "Из подготовки нужен только рабочий проект и установленный Claude Code."
+      },
+      {
+        type: "heading",
+        text: "1. Откройте проект"
+      },
+      {
+        type: "text",
+        text: "Откройте приложение в редакторе и перейдите в его папку в терминале."
+      },
+      {
+        type: "command",
+        command: "cd путь-к-проекту"
+      },
+      {
+        type: "heading",
+        text: "2. Поставьте скилл"
+      },
+      {
+        type: "command",
+        command: "npx skills@latest add emilkowalski/skills",
+        note: "Установщик задаст три вопроса."
+      },
+      {
+        type: "code",
+        lang: "text",
+        code: "Skill: apple-design\nAgent: Claude Code\nScope: Project"
+      },
+      {
+        type: "text",
+        text: "Scope: Project означает, что скилл останется внутри этого приложения и не попадёт в остальные проекты."
+      },
+      {
+        type: "heading",
+        text: "3. Перезапустите Claude Code"
+      },
+      {
+        type: "command",
+        command: "claude",
+        note: "Новый скилл подхватывается только при запуске."
+      },
+      {
+        type: "heading",
+        text: "4. Попросите аудит"
+      },
+      {
+        type: "text",
+        text: "Сначала — только разбор, без правок. Иначе Claude начнёт менять интерфейс раньше, чем вы поймёте, что именно с ним не так."
+      },
+      {
+        type: "prompt",
+        title: "Аудит интерфейса",
+        text: "Используй apple-design skill.\n\nПроверь интерфейс этого проекта по правилам скилла.\n\nПока ничего не изменяй. Сначала покажи пять главных проблем.\n\nДля каждой проблемы укажи:\n- компонент или файл;\n- что работает неправильно;\n- какое правило нарушено;\n- как это исправить."
+      },
+      {
+        type: "callout",
+        tone: "warning",
+        text: "«Пока ничего не изменяй» — не вежливость, а страховка. Список из пяти пунктов вы правите словами за минуту, переделанный интерфейс придётся откатывать."
+      },
+      {
+        type: "heading",
+        text: "5. Примените исправления"
+      },
+      {
+        type: "text",
+        text: "Из аудита берите не всё сразу. Три пункта за раз — столько ещё можно проверить глазами."
+      },
+      {
+        type: "prompt",
+        title: "Точечные правки",
+        text: "Исправь три самые важные проблемы из аудита.\n\nНе переделывай весь дизайн.\nСохрани текущую цветовую палитру и структуру приложения.\nПосле изменений запусти проект и проверь результат."
+      },
+      {
+        type: "text",
+        text: "Дальше цикл повторяется: аудит, три правки, проверка. Так интерфейс подтягивается по частям, и на каждом шаге видно, что именно изменилось."
+      },
+      {
+        type: "heading",
+        text: "Что в итоге"
+      },
+      {
+        type: "list",
+        ordered: true,
+        items: [
+          "Открыть готовый проект в терминале.",
+          "Поставить apple-design со scope Project.",
+          "Перезапустить Claude Code.",
+          "Запросить аудит без правок.",
+          "Исправить три пункта и проверить результат."
+        ]
+      },
+      {
+        type: "callout",
+        tone: "success",
+        text: "Репозиторий скиллов: github.com/emilkowalski/skills. Кроме apple-design там есть и другие — устанавливаются той же командой."
+      }
+    ]
+  },
+  {
     id: "c-remotion",
     slug: "remotion-video-kodom",
     title: "Видео через Claude Code",
@@ -17,10 +139,6 @@ export const POSTS: PostDetail[] = [
       pattern: "grid",
       imageUrl: "https://kyutpzudsiifhdxysyff.supabase.co/storage/v1/object/public/covers/remotion-video-kodom.jpg"
     },
-    badges: [
-      "new",
-      "free"
-    ],
     readMin: 5,
     blocks: [
       {
@@ -222,10 +340,6 @@ export const POSTS: PostDetail[] = [
       to: "#1E3A8A",
       pattern: "grid"
     },
-    badges: [
-      "new",
-      "free"
-    ],
     readMin: 4,
     blocks: [
       {
@@ -390,7 +504,6 @@ export const POSTS: PostDetail[] = [
       to: "#0F2A4A",
       pattern: "rings"
     },
-    badges: [],
     readMin: 1,
     blocks: [
       {
@@ -410,9 +523,6 @@ export const POSTS: PostDetail[] = [
       to: "#1E293B",
       pattern: "waves"
     },
-    badges: [
-      "free"
-    ],
     readMin: 1,
     blocks: [
       {
@@ -432,9 +542,6 @@ export const POSTS: PostDetail[] = [
       to: "#3B1D57",
       pattern: "rings"
     },
-    badges: [
-      "new"
-    ],
     readMin: 2,
     blocks: [
       {
@@ -536,9 +643,6 @@ export const POSTS: PostDetail[] = [
       to: "#2E1065",
       pattern: "dots"
     },
-    badges: [
-      "free"
-    ],
     readMin: 1,
     blocks: [
       {
@@ -558,7 +662,6 @@ export const POSTS: PostDetail[] = [
       to: "#4C1D95",
       pattern: "waves"
     },
-    badges: [],
     readMin: 1,
     blocks: [
       {
@@ -578,9 +681,6 @@ export const POSTS: PostDetail[] = [
       to: "#14532D",
       pattern: "grid"
     },
-    badges: [
-      "new"
-    ],
     readMin: 1,
     blocks: [
       {
@@ -600,9 +700,6 @@ export const POSTS: PostDetail[] = [
       to: "#0F3D26",
       pattern: "dots"
     },
-    badges: [
-      "free"
-    ],
     readMin: 3,
     blocks: [
       {
@@ -707,7 +804,6 @@ export const POSTS: PostDetail[] = [
       to: "#134E33",
       pattern: "waves"
     },
-    badges: [],
     readMin: 1,
     blocks: [
       {
@@ -727,9 +823,6 @@ export const POSTS: PostDetail[] = [
       to: "#5A2E05",
       pattern: "grid"
     },
-    badges: [
-      "free"
-    ],
     readMin: 1,
     blocks: [
       {
@@ -749,9 +842,6 @@ export const POSTS: PostDetail[] = [
       to: "#4A2606",
       pattern: "rings"
     },
-    badges: [
-      "new"
-    ],
     readMin: 2,
     blocks: [
       {
@@ -861,9 +951,6 @@ export const POSTS: PostDetail[] = [
       to: "#111827",
       pattern: "dots"
     },
-    badges: [
-      "free"
-    ],
     readMin: 2,
     blocks: [
       {
@@ -947,7 +1034,6 @@ export const POSTS: PostDetail[] = [
       to: "#0C2A3E",
       pattern: "waves"
     },
-    badges: [],
     readMin: 1,
     blocks: [
       {

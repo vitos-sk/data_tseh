@@ -15,13 +15,12 @@ export interface PostDraft {
   subtitle: string
   categoryId: string
   cover: PostCover
-  badges: string[]
   blocks: PostBlock[]
   published: boolean
 }
 
 const POST_FIELDS =
-  'id, slug, title, subtitle, category_id, cover, badges, blocks, read_min, published, sort_order'
+  'id, slug, title, subtitle, category_id, cover, blocks, read_min, published, sort_order'
 
 const FALLBACK_COVER: PostCover = { from: '#F04A1E', to: '#2A0E0A', pattern: 'grid' }
 
@@ -38,7 +37,6 @@ function toAdminPost(row: any): AdminPost {
     subtitle: row.subtitle ?? '',
     categoryId: row.category_id,
     cover: { ...FALLBACK_COVER, ...(row.cover ?? {}) },
-    badges: row.badges ?? [],
     blocks: row.blocks ?? [],
     readMin: row.read_min ?? 1,
     published: row.published,
@@ -60,7 +58,7 @@ export const adminRepository = {
   async listPosts(): Promise<Omit<AdminPost, 'blocks'>[]> {
     const { data, error } = await requireSupabase()
       .from('posts')
-      .select('id, slug, title, subtitle, category_id, cover, badges, read_min, published, sort_order')
+      .select('id, slug, title, subtitle, category_id, cover, read_min, published, sort_order')
       .order('sort_order')
 
     if (error) fail('Не удалось загрузить посты', error)
@@ -87,7 +85,6 @@ export const adminRepository = {
         subtitle: '',
         category_id: categoryId,
         cover: FALLBACK_COVER,
-        badges: [],
         blocks: [],
         read_min: 1,
         published: false,
@@ -114,7 +111,6 @@ export const adminRepository = {
         ...(patch.subtitle !== undefined && { subtitle: patch.subtitle }),
         ...(patch.categoryId !== undefined && { category_id: patch.categoryId }),
         ...(patch.cover !== undefined && { cover: patch.cover }),
-        ...(patch.badges !== undefined && { badges: patch.badges }),
         ...(patch.blocks !== undefined && { blocks: patch.blocks }),
         ...(readMin !== null && { read_min: readMin }),
         ...(patch.published !== undefined && { published: patch.published }),

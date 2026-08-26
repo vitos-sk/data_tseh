@@ -5,7 +5,6 @@ import type {
   CategoryId,
   IconName,
   Post,
-  PostBadge,
   PostBlock,
   PostCover,
   PostDetail,
@@ -30,7 +29,6 @@ interface PostRow {
   subtitle: string
   category_id: string
   cover: Partial<PostCover> | null
-  badges: string[] | null
   read_min: number
   published: boolean
   sort_order: number
@@ -65,7 +63,6 @@ function toPost(row: PostRow): Post {
     // Значения из jsonb приходят как есть, поэтому подстраховываемся:
     // пост с испорченной обложкой должен рисоваться, а не ронять экран.
     cover: { ...FALLBACK_COVER, ...(row.cover ?? {}) } as PostCover,
-    badges: (row.badges ?? []) as PostBadge[],
     readMin: row.read_min,
   }
 }
@@ -76,7 +73,7 @@ function toPostDetail(row: PostDetailRow): PostDetail {
 
 /** Поля перечислены явно: `select('*')` ломается при добавлении колонок. */
 const POST_FIELDS =
-  'id, slug, title, subtitle, category_id, cover, badges, read_min, published, sort_order'
+  'id, slug, title, subtitle, category_id, cover, read_min, published, sort_order'
 
 /** Содержимое тянем только при открытии поста — в списках оно не нужно. */
 const POST_DETAIL_FIELDS = `${POST_FIELDS}, blocks`

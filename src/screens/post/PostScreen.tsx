@@ -6,7 +6,6 @@ import { CategoryIcon } from '@/components/post/CategoryIcon'
 import { CoverArt } from '@/components/post/CoverArt'
 import { SaveButton } from '@/components/post/SaveButton'
 import { Screen } from '@/components/layout/Screen'
-import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { CATEGORY_BY_ID } from '@/data/categories'
 import { formatReadTime } from '@/lib/format'
@@ -14,8 +13,6 @@ import { useAsync } from '@/lib/useAsync'
 import { catalogRepository } from '@/modules/catalog'
 import { useLibraryStore } from '@/modules/library'
 import { isInsideTelegram, useBackButton } from '@/platform/telegram'
-
-const BADGE_LABEL = { new: 'Новое', free: 'Бесплатно' } as const
 
 /**
  * Пост целиком: одна страница, один заход. Ни программы, ни переходов между
@@ -87,16 +84,6 @@ export function PostScreen() {
           )}
           <SaveButton postId={post.id} />
         </div>
-
-        {post.badges.length > 0 && (
-          <div className="absolute inset-x-5 bottom-4 flex flex-wrap gap-1.5">
-            {post.badges.map((badge) => (
-              <Badge key={badge} tone={badge === 'new' ? 'red' : 'glass'}>
-                {BADGE_LABEL[badge]}
-              </Badge>
-            ))}
-          </div>
-        )}
       </CoverArt>
 
       <header className="px-5 pt-5">

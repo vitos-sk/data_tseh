@@ -8,8 +8,8 @@ export const AUTHOR = {
     {
       id: 'channel',
       label: 'Канал в Telegram',
-      value: '@mindtools_ai',
-      href: 'https://t.me/mindtools_ai',
+      value: '@ai_klik',
+      href: 'https://t.me/ai_klik',
     },
     // Чат закрытый: у него нет @имени, только ссылка-приглашение.
     {
