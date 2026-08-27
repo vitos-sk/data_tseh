@@ -90,7 +90,7 @@ export function BlockCard({
   return (
     <div className="rounded-[var(--radius-card)] bg-surface p-3">
       <div className="mb-2.5 flex items-center gap-1.5">
-        <Icon size={14} className="shrink-0 text-red-bright" />
+        <Icon size={14} className="shrink-0 text-accent-bright" />
         <span className="flex-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
           {label}
         </span>
@@ -298,7 +298,7 @@ function BlockEditor({
           <button
             type="button"
             onClick={() => onChange({ ...block, items: [...block.items, ''] })}
-            className="press self-start text-[15px] font-medium text-red-bright"
+            className="press self-start text-[15px] font-medium text-accent-bright"
           >
             + пункт
           </button>
@@ -370,7 +370,7 @@ function ImageBlockUpload({
         )}
       </div>
 
-      {error && <span className="text-[13px] text-red-bright">{error}</span>}
+      {error && <span className="text-[13px] text-accent-bright">{error}</span>}
     </div>
   )
 }
@@ -399,7 +399,7 @@ export function AddBlockPanel({ onAdd }: { onAdd: (kind: PostBlockKind) => void 
               onClick={() => onAdd(kind)}
               className={`press flex flex-col items-center gap-1.5 rounded-btn border py-3 text-[13px] font-medium ${
                 copyable
-                  ? 'border-red/35 bg-red/[0.06] text-red-bright'
+                  ? 'border-accent/26 bg-accent/[0.045] text-accent-bright'
                   : 'border-hairline bg-inset text-dim'
               }`}
             >
@@ -412,7 +412,7 @@ export function AddBlockPanel({ onAdd }: { onAdd: (kind: PostBlockKind) => void 
 
       <p className="mt-2.5 flex items-center gap-1.5 px-1 text-[12.5px] text-dim">
         <Copy size={12} className="shrink-0" />
-        красным — блоки, которые читатель копирует одним нажатием
+        подсвечены — блоки, которые читатель копирует одним нажатием
       </p>
     </div>
   )

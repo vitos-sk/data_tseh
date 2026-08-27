@@ -19,7 +19,7 @@ export function GlitchText({ children, className }: GlitchTextProps) {
 
       <span
         aria-hidden
-        className="absolute inset-0 text-red-bright"
+        className="absolute inset-0 text-accent-bright"
         style={{ animation: 'glitch-a 6s infinite steps(1, end)' }}
       >
         {children}

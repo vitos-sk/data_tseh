@@ -8,12 +8,12 @@ interface CoverArtProps {
 }
 
 /**
- * Обложка курса. Если картинки нет — рисуем градиент с геометрическим
+ * Обложка поста. Если картинки нет — рисуем градиент с геометрическим
  * узором: весит ноль и не требует загрузки.
  *
- * Фотографии показываем как есть, без обработки: ни обесцвечивания,
- * ни CRT-сетки, ни затемнения. Сверху только 1% красного — намёк на
- * палитру, который не мешает разглядеть саму картинку.
+ * Фотографии показываем как есть: ни плёнки, ни обесцвечивания, ни
+ * затемнения. Интерфейс монохромный целиком, и именно поэтому кадр
+ * внутри него имеет право остаться цветным — он и есть содержание.
  */
 export function CoverArt({ cover, className, children }: CoverArtProps) {
   const hasImage = Boolean(cover.imageUrl)
@@ -22,7 +22,7 @@ export function CoverArt({ cover, className, children }: CoverArtProps) {
     <div
       className={cn('relative overflow-hidden', !hasImage && 'crt', className)}
       style={{
-        backgroundImage: `linear-gradient(140deg, ${toRedAxis(cover.from)} 0%, ${toRedAxis(cover.to)} 100%)`,
+        backgroundImage: `linear-gradient(140deg, ${toMonoAxis(cover.from)} 0%, ${toMonoAxis(cover.to)} 100%)`,
       }}
     >
       {cover.imageUrl ? (
@@ -35,7 +35,6 @@ export function CoverArt({ cover, className, children }: CoverArtProps) {
             loading="lazy"
             className="absolute inset-0 size-full object-cover"
           />
-          <div className="absolute inset-0 bg-red opacity-[0.01]" />
         </>
       ) : (
         <>
@@ -51,14 +50,14 @@ export function CoverArt({ cover, className, children }: CoverArtProps) {
 }
 
 /**
- * Любой цвет обложки — на красную ось.
+ * Любой цвет обложки — на нейтральную ось.
  *
  * В данных (и в базе) градиенты остались от прежней темы: синие, зелёные,
- * оранжевые. Переписывать их не нужно — достаточно взять у цвета только
- * яркость и подмешать её к красному. Обложки остаются разными по глубине,
- * но ни одна не выпадает из палитры.
+ * оранжевые. Переписывать их не нужно — достаточно оставить от цвета одну
+ * яркость. Обложки остаются разными по глубине, но ни одна не выпадает
+ * из палитры, потому что палитры как таковой больше нет.
  */
-function toRedAxis(hex: string): string {
+function toMonoAxis(hex: string): string {
   const value = hex.replace('#', '')
   if (value.length !== 6) return hex
 
@@ -68,24 +67,25 @@ function toRedAxis(hex: string): string {
   // Воспринимаемая яркость: зелёный весит больше синего
   const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
 
-  // От почти чёрного до осветлённого красного
-  const mix = (dark: number, bright: number) => Math.round(dark + (bright - dark) * luma)
-  const out = [mix(10, 255), mix(6, 59), mix(6, 59)]
+  // От почти чёрного до притушенного акцента. Верх шкалы намеренно не белый:
+  // обложка — поверхность, а не источник света.
+  const level = Math.round(10 + (0x7a - 10) * luma)
+  const channel = level.toString(16).padStart(2, '0')
 
-  return `#${out.map((c) => c.toString(16).padStart(2, '0')).join('')}`
+  return `#${channel.repeat(3)}`
 }
 
 function Pattern({ pattern }: { pattern: PostCover['pattern'] }) {
   const common = 'absolute inset-0 h-full w-full'
-  // Узор красный, а не белый: белые линии выбивались бы из палитры
-  // сильнее, чем сама обложка.
-  const stroke = '#dc2626'
+  // Узор светится тем же светом, что и рамки. Прозрачности ниже прежних:
+  // белая линия на графите читается сильнее, чем прежняя на бордовом.
+  const stroke = '#f5f5f5'
 
   switch (pattern) {
     case 'rings':
       return (
         <svg className={common} viewBox="0 0 200 120" preserveAspectRatio="xMidYMid slice">
-          <g fill="none" stroke={stroke} strokeOpacity="0.5" strokeWidth="1">
+          <g fill="none" stroke={stroke} strokeOpacity="0.38" strokeWidth="1">
             {[18, 34, 50, 66, 82, 98].map((r) => (
               <circle key={r} cx="158" cy="26" r={r} />
             ))}
@@ -102,7 +102,7 @@ function Pattern({ pattern }: { pattern: PostCover['pattern'] }) {
                 d="M16 0H0V16"
                 fill="none"
                 stroke={stroke}
-                strokeOpacity="0.42"
+                strokeOpacity="0.32"
                 strokeWidth="1"
               />
             </pattern>
@@ -114,7 +114,7 @@ function Pattern({ pattern }: { pattern: PostCover['pattern'] }) {
     case 'waves':
       return (
         <svg className={common} viewBox="0 0 200 120" preserveAspectRatio="none">
-          <g fill="none" stroke={stroke} strokeOpacity="0.45" strokeWidth="1.5">
+          <g fill="none" stroke={stroke} strokeOpacity="0.34" strokeWidth="1.5">
             {[0, 22, 44, 66, 88].map((offset) => (
               <path
                 key={offset}
@@ -130,7 +130,7 @@ function Pattern({ pattern }: { pattern: PostCover['pattern'] }) {
         <svg className={common} viewBox="0 0 200 120" preserveAspectRatio="xMidYMid slice">
           <defs>
             <pattern id="cover-dots" width="14" height="14" patternUnits="userSpaceOnUse">
-              <circle cx="3" cy="3" r="1.6" fill={stroke} fillOpacity="0.6" />
+              <circle cx="3" cy="3" r="1.6" fill={stroke} fillOpacity="0.45" />
             </pattern>
           </defs>
           <rect width="200" height="120" fill="url(#cover-dots)" />

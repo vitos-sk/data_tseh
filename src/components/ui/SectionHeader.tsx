@@ -11,11 +11,11 @@ export function SectionHeader({ title, action }: SectionHeaderProps) {
   return (
     <div className="mb-3.5 flex items-baseline justify-between gap-3 px-5">
       <h2 className="text-[20px] leading-tight font-bold tracking-[0.25em] lowercase">
-        <span className="mr-2 text-red">/</span>
+        <span className="mr-2 text-accent">/</span>
         {title}
       </h2>
       {action && (
-        <button type="button" onClick={action.onClick} className="press label text-red-bright">
+        <button type="button" onClick={action.onClick} className="press label text-accent-bright">
           {action.label}
         </button>
       )}

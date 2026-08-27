@@ -11,8 +11,9 @@
      Стекло на каждой карточке заметно просаживает средний Android. */
   --color-surface: #0c0c0e;
   --color-inset: #131316;
-  /* Разделители тоже красные, а не серые: от этого интерфейс тёплый */
-  --color-hairline: rgba(220, 38, 38, 0.14);
+  /* Разделители не серые «по умолчанию», а тот же свет, что и акцент,
+     взятый на минимуме: интерфейс держится одним источником света. */
+  --color-hairline: rgba(245, 245, 245, 0.1);
 
   /* — текст —
      Не #fff: белый на почти чёрном жжёт глаза. */
@@ -23,14 +24,17 @@
   --color-dim: #8a8a8a;
 
   /* — акцент —
-     Красный один. Всё остальное — нейтральная ось. */
-  --color-red: #dc2626;
-  /* На текст идёт осветлённый: 5.77:1 против 4.22:1 у основного.
-     Основной остаётся на рамках, заливках и свечениях. */
-  --color-red-bright: #ff3b3b;
-  --color-red-deep: #b91c1c;
+     Цвета нет вовсе: акцент — это свет. Вся энергия перенесена с тона
+     на светлоту, поэтому ось одна и она нейтральная. */
+  --color-accent: #f5f5f5;
+  /* На текст идёт чистый белый: 18.9:1 на фоне и 16.6:1 на inset —
+     запас, которого у красного не было. Основной остаётся на рамках,
+     заливках и свечениях. */
+  --color-accent-bright: #ffffff;
+  /* Притушенный уровень: 4.9:1 на bg — нижняя граница для основного кегля. */
+  --color-accent-deep: #7a7a7a;
 
-  /* — статусы, единственные цвета вне красной оси — */
+  /* — статусы, единственные цвета во всём интерфейсе — */
   --color-ok: #22c55e;
   --color-warn: #eab308;
 
@@ -63,16 +67,19 @@
     --tabbar-height: 66px;
 
     /* — стекло —
-       Четыре переменные держат всю глубину интерфейса. Красный живёт даже
-       в границе, поэтому стекло выглядит тёплым, а не серым. */
+       Четыре переменные держат всю глубину интерфейса. Свет живёт даже
+       в границе — но белый на чёрном сильнее красного при той же альфе,
+       поэтому все альфы здесь на четверть ниже прежних. */
     --glass-bg: linear-gradient(160deg, rgba(12, 12, 14, 0.42), rgba(0, 0, 0, 0.52));
-    --glass-border: rgba(220, 38, 38, 0.12);
-    --glass-border-active: rgba(220, 38, 38, 0.35);
+    --glass-border: rgba(245, 245, 245, 0.09);
+    --glass-border-active: rgba(245, 245, 245, 0.28);
     --glass-blur: blur(5px);
-    --glow-red: 0 0 10px rgba(220, 38, 38, 0.14);
-    --glow-hover: 0 0 12px rgba(220, 38, 38, 0.16);
-    /* Вуаль поверх матрицы: без неё текст поверх капель не читается */
-    --veil: rgba(5, 5, 5, 0.78);
+    --glow-accent: 0 0 10px rgba(245, 245, 245, 0.1);
+    --glow-hover: 0 0 12px rgba(245, 245, 245, 0.13);
+    /* Вуаль поверх матрицы: без неё текст поверх капель не читается.
+       Плотнее прежних 0.78: белая голова капли ярче красной, и мелкий
+       текст Главной проваливал на ней AA (3.35:1 против 4.4:1 сейчас). */
+    --veil: rgba(5, 5, 5, 0.86);
   }
 
   /* Поверх матрицы стекло плотнее, иначе сквозь карточку видно каждую каплю */
@@ -106,7 +113,7 @@
 
   /* Клавиатурная навигация нужна на ПК, но кольцо не должно появляться от мыши */
   :focus-visible {
-    outline: 1px solid var(--color-red);
+    outline: 1px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -117,15 +124,16 @@
     cursor: pointer;
   }
 
-  /* Скроллбар виден только на ПК — и там он красный, как всё остальное */
+  /* Скроллбара нет ни на ПК, ни на телефоне: полосу заменяет край стекла */
   ::-webkit-scrollbar {
     width: 0;
     height: 0;
   }
 
+  /* Выделение — инверсия: белая плашка, чёрная краска. Терминал, а не подсветка. */
   ::selection {
-    background: rgba(220, 38, 38, 0.35);
-    color: #fff;
+    background: rgba(245, 245, 245, 0.22);
+    color: #000;
   }
 }
 
@@ -138,7 +146,7 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glow-red);
+  box-shadow: var(--glow-accent);
 }
 
 /*
@@ -207,11 +215,11 @@
   color: transparent;
 }
 
-@utility scanline-red {
+@utility scanline-accent {
   background-image: repeating-linear-gradient(
     to bottom,
-    var(--color-red-bright) 0px,
-    var(--color-red-bright) 1px,
+    var(--color-accent-bright) 0px,
+    var(--color-accent-bright) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -249,8 +257,9 @@
 }
 
 /*
- * Кнопка «под током»: призрачная красная рамка, заливка при контакте,
- * дышащая тень. Единственная первичная кнопка в интерфейсе.
+ * Кнопка «под током»: призрачная светлая рамка, при контакте — инверсия
+ * (белая заливка, чёрная краска) и дышащая тень. Единственная первичная
+ * кнопка в интерфейсе.
  */
 @utility btn-arm {
   position: relative;
@@ -261,10 +270,10 @@
   /* 14px по вертикали, а не 12px: иначе цель касания выходит около 42px,
      то есть меньше минимальных 44px. */
   padding: 14px 30px;
-  border: 1px solid var(--color-red);
+  border: 1px solid var(--color-accent);
   border-radius: var(--radius-btn);
   background: transparent;
-  color: var(--color-red-bright);
+  color: var(--color-accent-bright);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -275,14 +284,14 @@
     color 180ms var(--ease-ios);
 
   &:active {
-    background: var(--color-red-deep);
-    color: #fff;
+    background: var(--color-accent-deep);
+    color: var(--color-bg);
   }
 
   @media (hover: hover) {
     &:hover {
-      background: var(--color-red);
-      color: #fff;
+      background: var(--color-accent);
+      color: var(--color-bg);
     }
   }
 }
@@ -290,10 +299,10 @@
 @keyframes btn-arm {
   0%,
   100% {
-    box-shadow: 0 0 8px rgba(220, 38, 38, 0.12);
+    box-shadow: 0 0 8px rgba(245, 245, 245, 0.1);
   }
   50% {
-    box-shadow: 0 0 16px rgba(220, 38, 38, 0.26);
+    box-shadow: 0 0 16px rgba(245, 245, 245, 0.22);
   }
 }
 
@@ -330,7 +339,7 @@
   width: 7px;
   height: 1em;
   vertical-align: -0.15em;
-  background: var(--color-red-bright);
+  background: var(--color-accent-bright);
   animation: caret 1s step-end infinite;
 }
 

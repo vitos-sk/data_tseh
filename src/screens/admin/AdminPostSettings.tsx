@@ -149,7 +149,7 @@ function CoverEditor({
         </div>
       </div>
 
-      {error && <span className="mt-2 block text-[13px] text-red-bright">{error}</span>}
+      {error && <span className="mt-2 block text-[13px] text-accent-bright">{error}</span>}
     </Field>
   )
 }

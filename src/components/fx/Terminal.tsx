@@ -13,7 +13,7 @@ export function Terminal({ lines, caret = true, className }: TerminalProps) {
     <div className={cn('glass rounded-card px-3.5 py-3', className)}>
       {lines.map((line, i) => (
         <p key={i} className="text-[12.5px] leading-[1.7] tracking-[0.02em] text-dim">
-          <span className="mr-1.5 text-red-bright">&gt;</span>
+          <span className="mr-1.5 text-accent-bright">&gt;</span>
           {line}
           {caret && i === lines.length - 1 && <span className="caret ml-1.5" />}
         </p>

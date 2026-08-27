@@ -28,7 +28,7 @@ export function Screen({ children, title, subtitle, withTabBar = true, className
         <header className="px-5 pt-4 pb-6">
           {/* Заголовок строчный, метка над ним — капсовая: тот самый контраст,
               на котором держится вся типографика. */}
-          <p className="label mb-2.5 text-red">цех</p>
+          <p className="label mb-2.5 text-accent">цех</p>
           <h1 className="text-[28px] leading-[1.15] font-extrabold tracking-[0.14em] lowercase">
             {title}
           </h1>

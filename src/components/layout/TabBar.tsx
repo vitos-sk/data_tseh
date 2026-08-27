@@ -28,7 +28,7 @@ export function TabBar() {
 
   return (
     <nav
-      className="absolute inset-x-0 bottom-0 z-40 border-t border-red/20 bg-bg/90 backdrop-blur-md"
+      className="absolute inset-x-0 bottom-0 z-40 border-t border-accent/14 bg-bg/90 backdrop-blur-md"
       style={{ paddingBottom: 'var(--safe-bottom)' }}
     >
       <ul className="flex h-[var(--tabbar-height)] items-stretch">
@@ -43,7 +43,7 @@ export function TabBar() {
                   'relative flex h-full flex-col items-center justify-center gap-1.5',
                   'transition-colors duration-200',
                   isActive || (postIsOpen && to === '/catalog')
-                    ? 'text-red-bright'
+                    ? 'text-accent-bright'
                     : 'text-dim',
                 )
               }
@@ -52,9 +52,9 @@ export function TabBar() {
                 const active = isActive || (postIsOpen && to === '/catalog')
                 return (
                   <>
-                    {/* Красная риска сверху: у активной вкладки «горит» контакт */}
+                    {/* Светящаяся риска сверху: у активной вкладки «горит» контакт */}
                     {active && (
-                      <span className="absolute inset-x-5 top-0 h-px bg-red shadow-[0_0_8px_rgba(220,38,38,0.7)]" />
+                      <span className="absolute inset-x-5 top-0 h-px bg-accent shadow-[0_0_8px_rgba(245,245,245,0.45)]" />
                     )}
                     <span className="relative">
                       <Icon size={20} strokeWidth={active ? 2.2 : 1.8} />
@@ -63,7 +63,7 @@ export function TabBar() {
                           className={cn(
                             'absolute -top-1 -right-2 flex min-w-4 justify-center rounded-[2px] px-1',
                             'text-[9.5px] leading-4 font-bold tabular-nums',
-                            active ? 'bg-red text-white' : 'bg-inset text-dim',
+                            active ? 'bg-accent text-bg' : 'bg-inset text-dim',
                           )}
                         >
                           {savedCount}

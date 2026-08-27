@@ -27,7 +27,7 @@ export function SaveButton({ postId, variant = 'glass' }: SaveButtonProps) {
       className={cn(
         'press flex size-9 items-center justify-center rounded-btn border transition-colors duration-200',
         variant === 'glass' ? 'bg-black/50 backdrop-blur-sm' : 'bg-inset',
-        saved ? 'border-red text-red-bright shadow-[var(--glow-red)]' : 'border-hairline text-dim',
+        saved ? 'border-accent text-accent-bright shadow-[var(--glow-accent)]' : 'border-hairline text-dim',
       )}
     >
       <Bookmark size={16} strokeWidth={2} fill={saved ? 'currentColor' : 'none'} />

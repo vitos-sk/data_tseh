@@ -56,8 +56,10 @@ export function MatrixRain() {
         const glyph = GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
         const y = drops[i] * FONT_SIZE
 
-        // Голова капли ярче хвоста — иначе дождь читается как ровная сетка
-        ctx.fillStyle = Math.random() > 0.94 ? '#ff3b3b' : '#8f1d1d'
+        // Голова капли ярче хвоста — иначе дождь читается как ровная сетка.
+        // Белых голов заметно меньше, чем было красных: белая искра видна
+        // сквозь вуаль вдвое сильнее, и при прежней частоте фон мельтешит.
+        ctx.fillStyle = Math.random() > 0.965 ? '#f0f0f0' : '#2e2e2e'
         ctx.fillText(glyph, i * FONT_SIZE, y)
 
         if (y > height && Math.random() > 0.975) drops[i] = 0

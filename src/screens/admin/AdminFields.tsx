@@ -130,7 +130,7 @@ export function ChoiceRow<T extends string>({
           onClick={() => onChange(option.value)}
           className={cn(
             'press rounded-btn px-4 py-2 text-[15px] font-medium transition-colors duration-200',
-            value === option.value ? 'bg-red text-white' : 'bg-inset text-dim',
+            value === option.value ? 'bg-accent text-bg' : 'bg-inset text-dim',
           )}
         >
           {option.label}

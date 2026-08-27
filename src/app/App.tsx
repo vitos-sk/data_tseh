@@ -27,7 +27,7 @@ export function App() {
       <div
         className={cn(
           'relative h-full w-full max-w-[var(--app-width)] overflow-hidden bg-bg',
-          'md:my-5 md:h-[calc(100%-2.5rem)] md:rounded-lg md:ring-1 md:ring-red/20',
+          'md:my-5 md:h-[calc(100%-2.5rem)] md:rounded-lg md:ring-1 md:ring-accent/14',
         )}
       >
         <RouterProvider router={router} />

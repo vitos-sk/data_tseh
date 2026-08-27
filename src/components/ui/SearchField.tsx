@@ -11,7 +11,7 @@ interface SearchFieldProps {
 export function SearchField({ value, onChange, placeholder }: SearchFieldProps) {
   return (
     <div className="glass glass-live flex items-center gap-2.5 rounded-btn px-3.5 py-3">
-      <Search size={16} className="shrink-0 text-red" />
+      <Search size={16} className="shrink-0 text-accent" />
 
       <input
         type="text"
@@ -23,7 +23,7 @@ export function SearchField({ value, onChange, placeholder }: SearchFieldProps) 
         enterKeyHint="search"
         autoComplete="off"
         spellCheck={false}
-        className="min-w-0 flex-1 bg-transparent text-[15px] tracking-[0.02em] text-fg caret-[var(--color-red-bright)] outline-none placeholder:text-dim"
+        className="min-w-0 flex-1 bg-transparent text-[15px] tracking-[0.02em] text-fg caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
       />
 
       {value && (
@@ -34,7 +34,7 @@ export function SearchField({ value, onChange, placeholder }: SearchFieldProps) 
             haptic('tap')
             onChange('')
           }}
-          className="press flex size-5 shrink-0 items-center justify-center rounded-[2px] bg-red/20 text-red-bright"
+          className="press flex size-5 shrink-0 items-center justify-center rounded-[2px] bg-accent/14 text-accent-bright"
         >
           <X size={12} strokeWidth={2.6} />
         </button>

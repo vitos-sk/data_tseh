@@ -50,7 +50,7 @@ export function RecentSection() {
             <p className="label mt-2 truncate text-dim">{formatReadTime(post.readMin)}</p>
           </div>
 
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-btn border border-red bg-red/10 text-red-bright">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-btn border border-accent bg-accent/[0.07] text-accent-bright">
             <ArrowRight size={17} strokeWidth={2.2} />
           </span>
         </button>

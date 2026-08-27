@@ -8,9 +8,9 @@ import { CopyButton } from '../CopyButton'
  */
 export function PromptBlock({ text, title }: { text: string; title?: string }) {
   return (
-    <div className="rounded-card border border-red/30 bg-red/[0.04] p-3.5">
+    <div className="rounded-card border border-accent/22 bg-accent/[0.03] p-3.5">
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <span className="label text-red-bright">промт</span>
+        <span className="label text-accent-bright">промт</span>
         <span className="text-[11px] text-dim tabular-nums">{text.length} симв.</span>
       </div>
 

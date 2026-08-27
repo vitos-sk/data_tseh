@@ -10,10 +10,10 @@ import { CopyButton } from '../CopyButton'
 export function CommandBlock({ command, note }: { command: string; note?: string }) {
   return (
     <div>
-      <div className="flex items-start gap-3 rounded-card border border-red/25 bg-black/70 p-3">
+      <div className="flex items-start gap-3 rounded-card border border-accent/18 bg-black/70 p-3">
         <span
           aria-hidden
-          className="mt-px shrink-0 text-[13px] leading-[1.7] font-bold text-red-bright select-none"
+          className="mt-px shrink-0 text-[13px] leading-[1.7] font-bold text-accent-bright select-none"
         >
           $
         </span>

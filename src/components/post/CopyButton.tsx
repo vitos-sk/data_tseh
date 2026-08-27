@@ -38,7 +38,7 @@ export function CopyButton({ text, label, full = false, className }: CopyButtonP
         label ? 'px-3.5' : 'w-9',
         full && 'h-11 w-full',
         copied
-          ? 'border-red bg-red/15 text-red-bright'
+          ? 'border-accent bg-accent/11 text-accent-bright'
           : failed
             ? 'border-warn/50 text-warn'
             : 'border-hairline bg-inset text-dim',

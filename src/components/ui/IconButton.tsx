@@ -25,8 +25,8 @@ export function IconButton({ children, onClick, label, active, className }: Icon
         'press flex size-10 shrink-0 items-center justify-center rounded-btn border',
         'transition-colors duration-200',
         active
-          ? 'border-red bg-red text-white'
-          : 'border-hairline bg-inset text-dim active:border-red/35 active:text-red-bright',
+          ? 'border-accent bg-accent text-bg'
+          : 'border-hairline bg-inset text-dim active:border-accent/26 active:text-accent-bright',
         className,
       )}
     >

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn'
 
-type BadgeTone = 'red' | 'neutral' | 'glass'
+type BadgeTone = 'accent' | 'neutral' | 'glass'
 
 interface BadgeProps {
   children: React.ReactNode
@@ -9,11 +9,11 @@ interface BadgeProps {
 }
 
 const TONES: Record<BadgeTone, string> = {
-  // Заливка основным красным, текст белый: #dc2626 под мелким кеглем
-  // читается только как фон, но не как краска.
-  red: 'bg-red text-white',
+  // Инверсия: светлая заливка, чёрная краска. Под мелким кеглем акцент
+  // работает как плашка, а не как цвет буквы.
+  accent: 'bg-accent text-bg',
   neutral: 'bg-inset text-dim',
-  // Поверх обложки: тёмное стекло с красной рамкой
+  // Поверх обложки: тёмное стекло со светящейся рамкой
   glass: 'bg-black/55 text-fg backdrop-blur-sm border border-hairline',
 }
 

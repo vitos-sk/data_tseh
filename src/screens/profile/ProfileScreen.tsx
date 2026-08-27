@@ -30,13 +30,12 @@ export function ProfileScreen() {
       <section className="mb-7 px-5">
         <div className="flex items-center gap-4">
           {user?.photo_url ? (
-            <div className="relative size-16 shrink-0 overflow-hidden rounded-avatar border border-red/30">
+            <div className="relative size-16 shrink-0 overflow-hidden rounded-avatar border border-accent/22">
+              {/* Аватар без обработки: плёнку сняли, обесцвечивать не стали */}
               <img src={user.photo_url} alt="" className="size-full object-cover" />
-              {/* Намёк на палитру: 1% красного, фото остаётся собой */}
-              <div className="absolute inset-0 bg-red opacity-[0.01]" />
             </div>
           ) : (
-            <div className="crt flex size-16 shrink-0 items-center justify-center rounded-avatar border border-red/30 bg-inset text-[22px] font-bold text-red-bright">
+            <div className="crt flex size-16 shrink-0 items-center justify-center rounded-avatar border border-accent/22 bg-inset text-[22px] font-bold text-accent-bright">
               {displayName.charAt(0)}
             </div>
           )}
@@ -90,7 +89,7 @@ export function ProfileScreen() {
 
         <section className="px-5">
           <div className="glass rounded-card p-4">
-            <div className="mb-3 flex items-center gap-2 text-red">
+            <div className="mb-3 flex items-center gap-2 text-accent">
               <Info size={15} />
               <h2 className="label">
                 {AUTHOR.name} — {AUTHOR.tagline}

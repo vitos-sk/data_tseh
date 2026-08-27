@@ -110,7 +110,7 @@ function SignInForm() {
   return (
     <div className="mx-auto max-w-[360px]">
       <div className="mb-6 flex flex-col items-center text-center">
-        <span className="glass mb-5 flex size-14 items-center justify-center rounded-card text-red">
+        <span className="glass mb-5 flex size-14 items-center justify-center rounded-card text-accent">
           <KeyRound size={24} />
         </span>
         <h1 className="text-[20px] font-extrabold tracking-[0.14em] lowercase">вход в редакцию</h1>
@@ -123,7 +123,7 @@ function SignInForm() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="почта@пример.ру"
         autoComplete="username"
-        className="mb-2.5 w-full rounded-btn border border-hairline bg-inset px-4 py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-red-bright)] outline-none placeholder:text-dim"
+        className="mb-2.5 w-full rounded-btn border border-hairline bg-inset px-4 py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
       />
 
       <div className="mb-4 flex items-center gap-2 rounded-btn border border-hairline bg-inset pr-3 pl-4">
@@ -134,7 +134,7 @@ function SignInForm() {
           onKeyDown={(e) => e.key === 'Enter' && void signIn()}
           placeholder="пароль"
           autoComplete="current-password"
-          className="min-w-0 flex-1 bg-transparent py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-red-bright)] outline-none placeholder:text-dim"
+          className="min-w-0 flex-1 bg-transparent py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
         />
         <button
           type="button"
@@ -156,7 +156,7 @@ function SignInForm() {
       </button>
 
       {state === 'error' && (
-        <p className="mt-3 text-center text-[14px] leading-snug text-red-bright">{message}</p>
+        <p className="mt-3 text-center text-[14px] leading-snug text-accent-bright">{message}</p>
       )}
     </div>
   )

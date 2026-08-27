@@ -19,7 +19,7 @@ export function Block({ block }: { block: PostBlock }) {
     case 'heading':
       return (
         <h2 className="mt-4 text-[17px] leading-tight font-bold tracking-[0.12em]">
-          <span className="mr-2 text-red">#</span>
+          <span className="mr-2 text-accent">#</span>
           {block.text}
         </h2>
       )
@@ -44,7 +44,7 @@ export function Block({ block }: { block: PostBlock }) {
         <ol className="flex flex-col gap-3">
           {block.items.map((item, i) => (
             <li key={i} className="flex gap-3">
-              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[2px] border border-red/35 bg-red/10 text-[11px] font-bold text-red-bright tabular-nums">
+              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[2px] border border-accent/25 bg-accent/[0.07] text-[11px] font-bold text-accent-bright tabular-nums">
                 {i + 1}
               </span>
               <span className="flex-1 text-[14.5px] leading-[1.8] tracking-[0.01em] text-muted">
@@ -58,7 +58,7 @@ export function Block({ block }: { block: PostBlock }) {
           {block.items.map((item, i) => (
             <li key={i} className="flex gap-3">
               {/* Маркер — квадрат, а не точка: круглых форм в интерфейсе нет */}
-              <span className="mt-[10px] size-1.5 shrink-0 bg-red" />
+              <span className="mt-[10px] size-1.5 shrink-0 bg-accent" />
               <span className="flex-1 text-[14.5px] leading-[1.8] tracking-[0.01em] text-muted">
                 {item}
               </span>
@@ -69,7 +69,7 @@ export function Block({ block }: { block: PostBlock }) {
 
     case 'quote':
       return (
-        <blockquote className="border-l-2 border-red pl-4">
+        <blockquote className="border-l-2 border-accent pl-4">
           <p className="text-[15px] leading-[1.7] tracking-[0.02em] text-fg">{block.text}</p>
           {block.author && (
             <cite className="label mt-2.5 block text-dim not-italic">— {block.author}</cite>
@@ -79,17 +79,18 @@ export function Block({ block }: { block: PostBlock }) {
 
     case 'callout': {
       // Зелёный и жёлтый допущены только здесь и только как статус —
-      // остального цвета в интерфейсе нет.
+      // остального цвета в интерфейсе нет. У белого альфы ниже: на чёрном
+      // он перекрывает статусные тона при одинаковой прозрачности.
       const TONE = {
-        info: { color: COLORS.redBright, Icon: Info },
-        warning: { color: COLORS.warn, Icon: AlertTriangle },
-        success: { color: COLORS.ok, Icon: CheckCircle2 },
+        info: { color: COLORS.accentBright, tint: '0d', edge: '26', Icon: Info },
+        warning: { color: COLORS.warn, tint: '12', edge: '33', Icon: AlertTriangle },
+        success: { color: COLORS.ok, tint: '12', edge: '33', Icon: CheckCircle2 },
       }[block.tone]
 
       return (
         <div
           className="flex gap-3 rounded-card border p-3.5"
-          style={{ backgroundColor: `${TONE.color}12`, borderColor: `${TONE.color}33` }}
+          style={{ backgroundColor: `${TONE.color}${TONE.tint}`, borderColor: `${TONE.color}${TONE.edge}` }}
         >
           <TONE.Icon size={17} color={TONE.color} className="mt-0.5 shrink-0" />
           <p className="text-[13.5px] leading-[1.7] tracking-[0.01em] text-muted">{block.text}</p>

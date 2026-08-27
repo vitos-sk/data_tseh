@@ -8,7 +8,7 @@ import { haptic } from '@/platform/telegram'
 export function RowGroup({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
     <section className="px-5">
-      {title && <h2 className="label mb-2.5 px-1 text-red">{title}</h2>}
+      {title && <h2 className="label mb-2.5 px-1 text-accent">{title}</h2>}
       <div className="glass overflow-hidden rounded-card">
         <div className="divide-y divide-hairline">{children}</div>
       </div>
@@ -26,7 +26,7 @@ interface RowProps {
 
 /** Квадрат под значок строки. Тон задаётся акцентом, форма — общая. */
 function IconBox({ icon, accent }: { icon: React.ReactNode; accent?: string }) {
-  const color = accent ?? COLORS.red
+  const color = accent ?? COLORS.accent
   return (
     <span
       className="flex size-8 shrink-0 items-center justify-center rounded-btn border"
@@ -94,7 +94,7 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
         className={cn(
           'relative h-[28px] w-[48px] shrink-0 rounded-btn border transition-colors duration-200',
           checked
-            ? 'border-red bg-red/25 shadow-[var(--glow-red)]'
+            ? 'border-accent bg-accent/18 shadow-[var(--glow-accent)]'
             : 'border-hairline bg-inset',
         )}
       >
@@ -104,7 +104,7 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
             // и без него абсолютный бегунок встаёт по центру, а не слева.
             'absolute top-[3px] left-0 size-[20px] rounded-[2px]',
             'transition-transform duration-200 ease-[var(--ease-ios)]',
-            checked ? 'translate-x-[25px] bg-red' : 'translate-x-[3px] bg-dim',
+            checked ? 'translate-x-[25px] bg-accent' : 'translate-x-[3px] bg-dim',
           )}
         />
       </button>
@@ -180,7 +180,7 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
             setAsking(false)
             onConfirm()
           }}
-          className="press label rounded-btn bg-red px-3 py-2 text-white"
+          className="press label rounded-btn bg-accent px-3 py-2 text-bg"
         >
           сбросить
         </button>

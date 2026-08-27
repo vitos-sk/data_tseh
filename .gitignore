@@ -29,3 +29,6 @@ dist-ssr
 .agents/
 .claude/
 skills-lock.json
+
+# Черновики аудитов скилла impeccable — локальные заметки
+.impeccable/

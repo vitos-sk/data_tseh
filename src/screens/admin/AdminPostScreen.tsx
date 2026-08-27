@@ -165,7 +165,7 @@ export function AdminPostScreen() {
 
       <AdminPostSettings draft={draft} categories={categories ?? []} onPatch={patch} />
 
-      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>}
+      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-accent-bright">{error}</p>}
 
       <DangerZone onDelete={() => void remove()} />
 
@@ -181,7 +181,7 @@ export function AdminPostScreen() {
           type="button"
           onClick={() => void save()}
           disabled={state === 'saving'}
-          className="press w-full rounded-btn bg-red py-3.5 text-[16px] font-semibold text-white disabled:opacity-40"
+          className="press w-full rounded-btn bg-accent py-3.5 text-[16px] font-semibold text-bg disabled:opacity-40"
         >
           {state === 'saving'
             ? 'Сохраняем…'
@@ -214,7 +214,7 @@ function DangerZone({ onDelete }: { onDelete: () => void }) {
           <button
             type="button"
             onClick={onDelete}
-            className="press rounded-btn bg-red px-3.5 py-1.5 text-[14px] font-semibold text-white"
+            className="press rounded-btn bg-accent px-3.5 py-1.5 text-[14px] font-semibold text-bg"
           >
             Удалить
           </button>
@@ -223,7 +223,7 @@ function DangerZone({ onDelete }: { onDelete: () => void }) {
         <button
           type="button"
           onClick={() => setAsking(true)}
-          className="press w-full rounded-btn bg-surface py-3 text-[15px] font-medium text-red-bright"
+          className="press w-full rounded-btn bg-surface py-3 text-[15px] font-medium text-accent-bright"
         >
           Удалить пост
         </button>

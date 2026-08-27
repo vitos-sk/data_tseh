@@ -1,7 +1,7 @@
 import { cn } from '@/lib/cn'
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-card bg-red/8', className)} />
+  return <div className={cn('animate-pulse rounded-card bg-accent/6', className)} />
 }
 
 /** Заглушка ленты курсов на время загрузки — повторяет геометрию карточки. */

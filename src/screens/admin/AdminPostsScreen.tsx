@@ -53,14 +53,14 @@ export function AdminPostsScreen() {
           type="button"
           disabled={creating}
           onClick={() => void createPost()}
-          className="press flex items-center gap-1.5 rounded-btn bg-red px-4 py-2.5 text-[15px] font-semibold text-white disabled:opacity-40"
+          className="press flex items-center gap-1.5 rounded-btn bg-accent px-4 py-2.5 text-[15px] font-semibold text-bg disabled:opacity-40"
         >
           <Plus size={17} strokeWidth={2.6} />
           Создать
         </button>
       </div>
 
-      {error && <p className="mb-4 px-5 text-[14px] leading-snug text-red-bright">{error}</p>}
+      {error && <p className="mb-4 px-5 text-[14px] leading-snug text-accent-bright">{error}</p>}
 
       {loading && (
         <div className="flex flex-col gap-2.5 px-5">
