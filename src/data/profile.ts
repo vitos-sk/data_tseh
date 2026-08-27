@@ -14,7 +14,7 @@ export const AUTHOR = {
     // Чат закрытый: у него нет @имени, только ссылка-приглашение.
     {
       id: 'chat',
-      label: 'Чат учеников',
+      label: 'Чат читателей',
       value: 'вступить',
       href: 'https://t.me/+aQhj6CFdb-c0OGY6',
     },

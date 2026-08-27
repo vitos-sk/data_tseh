@@ -31,46 +31,6 @@ export function useBackButton(onBack: (() => void) | null) {
   }, [enabled])
 }
 
-interface MainButtonOptions {
-  text: string
-  visible?: boolean
-  active?: boolean
-  onClick: () => void
-}
-
-/** Нативная главная кнопка внизу экрана Telegram. Красим в кремовый CTA. */
-export function useMainButton({ text, visible = true, active = true, onClick }: MainButtonOptions) {
-  const handler = useRef(onClick)
-
-  useEffect(() => {
-    handler.current = onClick
-  })
-
-  useEffect(() => {
-    const app = getWebApp()
-    if (!app) return
-
-    const cb = () => handler.current()
-    app.MainButton.onClick(cb)
-    return () => {
-      app.MainButton.offClick(cb)
-      app.MainButton.hide()
-    }
-  }, [])
-
-  useEffect(() => {
-    const app = getWebApp()
-    if (!app) return
-    app.MainButton.setParams({
-      text,
-      color: '#F4F3EE',
-      text_color: '#1A1A1C',
-      is_active: active,
-      is_visible: visible,
-    })
-  }, [text, visible, active])
-}
-
 type HapticKind = 'tap' | 'select' | 'success' | 'warning'
 
 /** Тактильная отдача. Вне Telegram — пустышка, вызывать можно откуда угодно. */

@@ -16,4 +16,10 @@ export interface CatalogRepository {
   getPostsByIds(ids: string[]): Promise<Post[]>
   getPostById(id: string): Promise<Post | null>
   getPost(slug: string): Promise<PostDetail | null>
+  /**
+   * Следующий пост того же направления — то, что предлагается в конце чтения.
+   * Список закольцован: за последним идёт первый, иначе у половины
+   * направлений конец поста оказывался бы тупиком.
+   */
+  getNextPost(categoryId: CategoryId, currentId: string): Promise<Post | null>
 }

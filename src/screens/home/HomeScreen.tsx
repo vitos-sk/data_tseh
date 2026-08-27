@@ -1,5 +1,5 @@
 import { SearchX } from 'lucide-react'
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { CategoryFilter, type CategoryFilterValue } from '@/components/post/CategoryFilter'
 import { PostCard } from '@/components/post/PostCard'
 import { RecentSection } from '@/components/post/RecentSection'
@@ -7,17 +7,35 @@ import { GlitchText } from '@/components/fx/GlitchText'
 import { Terminal } from '@/components/fx/Terminal'
 import { Screen } from '@/components/layout/Screen'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { LoadError } from '@/components/ui/LoadError'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { PostCardSkeleton } from '@/components/ui/Skeleton'
+import { CATEGORIES, CATEGORY_BY_ID } from '@/data/categories'
 import { useAsync } from '@/lib/useAsync'
 import { catalogRepository } from '@/modules/catalog'
 import { getTelegramUser } from '@/platform/telegram'
 
+const IDS = new Set<string>(CATEGORIES.map((c) => c.id))
+
 export function HomeScreen() {
-  const [filter, setFilter] = useState<CategoryFilterValue>('all')
   const user = getTelegramUser()
 
-  const { data: posts, loading } = useAsync(
+  /*
+   * Фильтр живёт в адресе, а не в useState: открыл пост, вернулся назад —
+   * и направление осталось выбранным. Локальное состояние сбрасывалось
+   * при каждом возврате, и человек каждый раз начинал с «Всё».
+   */
+  const [params, setParams] = useSearchParams()
+  const raw = params.get('c') ?? ''
+  const filter: CategoryFilterValue = IDS.has(raw) ? (raw as CategoryFilterValue) : 'all'
+
+  const setFilter = (value: CategoryFilterValue) => {
+    // replace, а не push: перебор чипов не должен набивать историю браузера,
+    // иначе нативная «назад» в Telegram уводит по вкладкам фильтра.
+    setParams(value === 'all' ? {} : { c: value }, { replace: true })
+  }
+
+  const { data: posts, loading, error, retry } = useAsync(
     () => catalogRepository.getPosts(filter === 'all' ? undefined : filter),
     [filter],
   )
@@ -40,16 +58,16 @@ export function HomeScreen() {
             <GlitchText>ЦЕХ</GlitchText>
           </h1>
 
-          <p className="mt-4 text-[13px] leading-[1.7] tracking-[0.02em] text-dim">
-            посты без воды
-          </p>
+          <p className="type-body mt-4 tracking-[0.02em] text-dim">посты без воды</p>
         </header>
 
         <div className="mb-6 px-5">
           <Terminal
             lines={[
-              user ? `здравствуйте, ${user.first_name}` : 'здравствуйте, гость',
-              'чему научимся сегодня?',
+              // Без имени — просто «здравствуйте». Прежнее «здравствуйте, гость»
+              // первым делом отказывало человеку в том, что он свой.
+              user ? `здравствуйте, ${user.first_name}` : 'здравствуйте',
+              'что почитаем сегодня?',
             ]}
           />
         </div>
@@ -59,7 +77,9 @@ export function HomeScreen() {
         {filter === 'all' && <RecentSection />}
 
         <section className="pt-7">
-          <SectionHeader title={filter === 'all' ? 'рекомендуем' : 'направление'} />
+          {/* Заголовок называет то, что под ним лежит. «Рекомендуем» обещало
+              отбор, которого нет: список идёт в редакторском порядке. */}
+          <SectionHeader title={filter === 'all' ? 'все посты' : CATEGORY_BY_ID[filter].title} />
 
           <div className="flex flex-col gap-3 px-5">
             {loading && (
@@ -69,7 +89,9 @@ export function HomeScreen() {
               </>
             )}
 
-            {!loading && posts?.length === 0 && (
+            {!loading && error && <LoadError what="ленту" onRetry={retry} />}
+
+            {!loading && !error && posts?.length === 0 && (
               <EmptyState
                 icon={<SearchX size={24} />}
                 title="тут пока пусто"
@@ -77,7 +99,7 @@ export function HomeScreen() {
               />
             )}
 
-            {!loading && posts?.map((post) => <PostCard key={post.id} post={post} />)}
+            {!loading && !error && posts?.map((post) => <PostCard key={post.id} post={post} />)}
           </div>
         </section>
       </div>

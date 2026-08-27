@@ -13,11 +13,12 @@ interface CopyButtonProps {
 }
 
 /**
- * Кнопка копирования. Высота не меньше 36px: это телефон и палец,
- * а не курсор мыши.
+ * Кнопка копирования. Видимая высота 36px, зона касания — 48px за счёт
+ * псевдоэлемента: это телефон и палец, а не курсор мыши.
  *
  * После нажатия подпись меняется на «скопировано» — состояние важнее
- * экономии места: без подтверждения непонятно, сработало ли.
+ * экономии места: без подтверждения непонятно, сработало ли. Для тех,
+ * кто подпись не видит, исход дублируется в aria-live.
  */
 export function CopyButton({ text, label, full = false, className }: CopyButtonProps) {
   const { copied, failed, copy } = useCopy()
@@ -34,7 +35,8 @@ export function CopyButton({ text, label, full = false, className }: CopyButtonP
         void copy(text)
       }}
       className={cn(
-        'press flex h-9 shrink-0 items-center justify-center gap-2 rounded-btn border text-[11px] font-bold tracking-[0.16em] uppercase transition-colors duration-200',
+        'press relative flex h-9 shrink-0 items-center justify-center gap-2 rounded-btn border text-[11px] font-bold tracking-[0.16em] uppercase transition-colors duration-200',
+        "after:absolute after:-inset-1.5 after:content-['']",
         label ? 'px-3.5' : 'w-9',
         full && 'h-11 w-full',
         copied
@@ -47,6 +49,9 @@ export function CopyButton({ text, label, full = false, className }: CopyButtonP
     >
       <Icon size={14} strokeWidth={2.4} />
       {caption && <span>{caption}</span>}
+      <span className="sr-only" role="status" aria-live="polite">
+        {failed ? 'Скопировать не удалось' : copied ? 'Скопировано' : ''}
+      </span>
     </button>
   )
 }

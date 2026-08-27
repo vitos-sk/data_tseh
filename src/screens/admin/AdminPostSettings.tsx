@@ -105,7 +105,7 @@ function CoverEditor({
       label="Обложка"
       hint="Без картинки рисуется градиент — он же виден, пока картинка грузится"
     >
-      <CoverArt cover={cover} className="mb-3 h-36 rounded-2xl" />
+      <CoverArt cover={cover} className="mb-3 h-36 rounded-card" />
 
       <div className="flex flex-col gap-3">
         <div className="flex gap-2">

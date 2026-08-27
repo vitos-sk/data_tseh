@@ -126,7 +126,7 @@ function AdminPostRow({ post }: { post: PostRowData }) {
       onClick={() => navigate(adminPath(`/post/${post.id}`))}
       className="press flex items-center gap-3.5 rounded-[var(--radius-card)] bg-surface p-3 text-left"
     >
-      <CoverArt cover={post.cover} className="size-12 shrink-0 rounded-xl" />
+      <CoverArt cover={post.cover} className="size-12 shrink-0 rounded-card" />
 
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[16px] font-semibold">{post.title}</span>

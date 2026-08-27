@@ -6,7 +6,12 @@ export type LanguageCode = 'ru'
 
 interface SettingsState {
   language: LanguageCode
-  /** Напоминания о незаконченных курсах. Пока только флаг — рассылки нет. */
+  /*
+   * Напоминания вернуться к сохранённому. Рассылки пока нет, поэтому
+   * переключателя в профиле тоже нет: обещать то, чего система не делает,
+   * дороже, чем не показывать настройку. Поле оставлено — оно появится
+   * вместе с рассылкой и не сломает формат хранения.
+   */
   reminders: boolean
   /** Уменьшенная анимация переходов */
   reducedMotion: boolean
@@ -14,6 +19,19 @@ interface SettingsState {
   setLanguage: (language: LanguageCode) => void
   toggleReminders: () => void
   toggleReducedMotion: () => void
+}
+
+/**
+ * Системная настройка «уменьшить движение» — значение по умолчанию, а не
+ * то, что можно проигнорировать. Раньше стор всегда стартовал с false,
+ * ставил на <html> data-motion="full" и тем самым отменял системный запрос
+ * пользователя ещё до того, как он что-то выбрал.
+ */
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+  )
 }
 
 /**
@@ -25,7 +43,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       language: 'ru',
       reminders: true,
-      reducedMotion: false,
+      reducedMotion: prefersReducedMotion(),
 
       setLanguage: (language) => set({ language }),
       toggleReminders: () => set((s) => ({ reminders: !s.reminders })),

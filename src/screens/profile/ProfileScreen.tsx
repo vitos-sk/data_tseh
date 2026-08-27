@@ -1,4 +1,4 @@
-import { AtSign, Bell, Globe, Info, MessageCircle, Sparkles, Trash2 } from 'lucide-react'
+import { AtSign, Info, MessageCircle, Sparkles, Trash2 } from 'lucide-react'
 import { Screen } from '@/components/layout/Screen'
 import { APP_VERSION, AUTHOR } from '@/data/profile'
 import { useLibraryStore } from '@/modules/library'
@@ -15,8 +15,6 @@ export function ProfileScreen() {
   const user = getTelegramUser()
   const clearSaved = useLibraryStore((s) => s.clearSaved)
 
-  const reminders = useSettingsStore((s) => s.reminders)
-  const toggleReminders = useSettingsStore((s) => s.toggleReminders)
   const reducedMotion = useSettingsStore((s) => s.reducedMotion)
   const toggleReducedMotion = useSettingsStore((s) => s.toggleReducedMotion)
 
@@ -35,13 +33,13 @@ export function ProfileScreen() {
               <img src={user.photo_url} alt="" className="size-full object-cover" />
             </div>
           ) : (
-            <div className="crt flex size-16 shrink-0 items-center justify-center rounded-avatar border border-accent/22 bg-inset text-[22px] font-bold text-accent-bright">
+            <div className="crt flex size-16 shrink-0 items-center justify-center rounded-avatar border border-accent/22 bg-inset type-title font-bold text-accent-bright">
               {displayName.charAt(0)}
             </div>
           )}
 
           <div className="min-w-0">
-            <p className="truncate text-[17px] font-bold tracking-[0.08em]">{displayName}</p>
+            <p className="type-heading truncate font-bold tracking-[0.08em]">{displayName}</p>
             <p className="label mt-2 truncate text-dim">
               {user?.username ? `@${user.username}` : 'откройте в telegram, чтобы войти'}
             </p>
@@ -50,22 +48,13 @@ export function ProfileScreen() {
       </section>
 
       <div className="flex flex-col gap-7">
+        {/*
+          Строк «Язык» и «Напоминания» здесь больше нет. Первая была шевроном
+          с хаптиком и без действия — второго языка нет. Вторая переключала
+          флаг, за которым нет рассылки. Обе обещали то, чего система
+          не делает, и обе стоили внимания на каждом заходе в профиль.
+        */}
         <RowGroup title="настройки">
-          <LinkRow
-            icon={<Globe size={17} />}
-            label="Язык"
-            value="Русский"
-            onClick={() => {
-              // Второго языка пока нет — см. решение по мультиязычности.
-            }}
-          />
-          <ToggleRow
-            icon={<Bell size={17} />}
-            label="Напоминания"
-            hint="Раз в неделю подтолкнём вернуться к сохранённому"
-            checked={reminders}
-            onChange={toggleReminders}
-          />
           <ToggleRow
             icon={<Sparkles size={17} />}
             label="Меньше анимации"
@@ -95,7 +84,7 @@ export function ProfileScreen() {
                 {AUTHOR.name} — {AUTHOR.tagline}
               </h2>
             </div>
-            <p className="text-[13px] leading-[1.8] tracking-[0.01em] text-dim">{AUTHOR.about}</p>
+            <p className="type-body tracking-[0.01em] text-dim">{AUTHOR.about}</p>
           </div>
         </section>
 

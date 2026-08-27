@@ -76,14 +76,32 @@ export function MatrixRain() {
       return
     }
 
-    let timer = 0
+    /*
+     * requestAnimationFrame, а не setInterval: интервал продолжает ставить
+     * задачи в очередь, даже когда браузер не успевает их выполнять, и на
+     * слабом Android кадры копятся лавиной. rAF просто пропускает такт.
+     *
+     * Шаг дождя при этом остаётся прежним — 70 мс: за скоростью следит
+     * накопитель времени, а не частота кадров экрана.
+     */
+    let raf = 0
+    let last = 0
+
+    const tick = (now: number) => {
+      raf = window.requestAnimationFrame(tick)
+      if (now - last < STEP_MS) return
+      last = now
+      draw()
+    }
+
     const start = () => {
-      if (timer) return
-      timer = window.setInterval(draw, STEP_MS)
+      if (raf) return
+      last = 0
+      raf = window.requestAnimationFrame(tick)
     }
     const stop = () => {
-      window.clearInterval(timer)
-      timer = 0
+      window.cancelAnimationFrame(raf)
+      raf = 0
     }
 
     const onVisibility = () => (document.hidden ? stop() : start())

@@ -34,7 +34,7 @@ export function SearchField({ value, onChange, placeholder }: SearchFieldProps) 
             haptic('tap')
             onChange('')
           }}
-          className="press flex size-5 shrink-0 items-center justify-center rounded-[2px] bg-accent/14 text-accent-bright"
+          className="press relative flex size-5 shrink-0 items-center justify-center rounded-[2px] bg-accent/14 text-accent-bright after:absolute after:-inset-3 after:content-['']"
         >
           <X size={12} strokeWidth={2.6} />
         </button>

@@ -4,6 +4,8 @@
  */
 export interface KeyValueStore {
   getItem(key: string): Promise<string | null>
-  setItem(key: string, value: string): Promise<void>
-  removeItem(key: string): Promise<void>
+  /** false — значение не записано: не влезло в лимит или хранилище отказало. */
+  setItem(key: string, value: string): Promise<boolean>
+  /** Тоже булев: zustand требует одинаковый тип ответа у всех трёх методов. */
+  removeItem(key: string): Promise<boolean>
 }

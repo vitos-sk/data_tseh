@@ -165,4 +165,13 @@ export const supabaseCatalog: CatalogRepository = {
     if (error) fail('пост по адресу', error)
     return data ? toPostDetail(data as PostDetailRow) : null
   },
+
+  async getNextPost(categoryId: CategoryId, currentId: string) {
+    // Забираем направление целиком: постов в нём единицы, а сдвиг на один
+    // элемент в SQL потребовал бы знать sort_order текущего поста заранее.
+    const list = await this.getPosts(categoryId)
+    const index = list.findIndex((post) => post.id === currentId)
+    if (index === -1 || list.length < 2) return null
+    return list[(index + 1) % list.length]
+  },
 }

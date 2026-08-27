@@ -4,7 +4,7 @@ export function Skeleton({ className }: { className?: string }) {
   return <div className={cn('animate-pulse rounded-card bg-accent/6', className)} />
 }
 
-/** Заглушка ленты курсов на время загрузки — повторяет геометрию карточки. */
+/** Заглушка ленты постов на время загрузки — повторяет геометрию карточки. */
 export function PostCardSkeleton() {
   return (
     <div className="glass rounded-card p-3">

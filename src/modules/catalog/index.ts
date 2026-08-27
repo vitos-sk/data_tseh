@@ -1,4 +1,5 @@
 export { catalogRepository } from './catalog.repository'
+export { cachePost, readCachedPost, readCachedPostsByIds } from './catalog.cache'
 export { estimateReadMin } from './readTime'
 export type { CatalogRepository } from './catalog.port'
 export type {

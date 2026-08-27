@@ -22,6 +22,21 @@ export function isInsideTelegram(): boolean {
   return app.platform !== 'unknown' && app.platform !== ''
 }
 
+/**
+ * Адрес поста, с которого Telegram просит начать.
+ *
+ * Ссылка вида t.me/<bot>/<app>?startapp=<slug> приходит в start_param —
+ * без этого переход по присланному в чат посту открывал бы Главную,
+ * и человек искал бы обещанный пост руками.
+ *
+ * Значение приходит снаружи, поэтому сверяем его с формой slug'а, а не
+ * подставляем в маршрут как есть.
+ */
+export function getStartPostSlug(): string | null {
+  const param = getWebApp()?.initDataUnsafe.start_param
+  return param && /^[a-z0-9-]{1,64}$/.test(param) ? param : null
+}
+
 /** Синхронизирует высоту вьюпорта Telegram с CSS-переменной, чтобы таб-бар не прыгал. */
 function syncViewport(app: TelegramWebApp): () => void {
   const apply = () => {

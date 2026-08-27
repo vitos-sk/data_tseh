@@ -71,4 +71,11 @@ export const mockCatalog: CatalogRepository = {
   getPost(slug: string): Promise<PostDetail | null> {
     return respond(POSTS.find((p) => p.slug === slug) ?? null)
   },
+
+  getNextPost(categoryId: CategoryId, currentId: string): Promise<Post | null> {
+    const list = POSTS.filter((p) => p.categoryId === categoryId)
+    const index = list.findIndex((p) => p.id === currentId)
+    if (index === -1 || list.length < 2) return respond(null)
+    return respond(brief(list[(index + 1) % list.length]))
+  },
 }

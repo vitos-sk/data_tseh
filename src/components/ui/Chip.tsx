@@ -18,7 +18,7 @@ export function Chip({ label, active = false, onClick }: ChipProps) {
       }}
       aria-pressed={active}
       className={cn(
-        'label shrink-0 rounded-btn border px-3.5 py-2.5 whitespace-nowrap',
+        'label flex min-h-11 shrink-0 items-center rounded-btn border px-3.5 whitespace-nowrap',
         'transition-colors duration-200',
         active
           ? 'border-accent bg-accent text-bg shadow-[var(--glow-hover)]'

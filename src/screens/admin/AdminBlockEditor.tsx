@@ -13,7 +13,7 @@ import {
   Trash2,
   Type,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { adminRepository } from '@/modules/admin/admin.repository'
 import type { PostBlock, PostBlockKind } from '@/modules/catalog'
 import { ChoiceRow, Select, TextArea, TextInput } from './AdminFields'
@@ -101,13 +101,44 @@ export function BlockCard({
         <IconAction label="Ниже" disabled={index === total - 1} onClick={() => onMove(1)}>
           <ChevronDown size={16} />
         </IconAction>
-        <IconAction label="Удалить блок" onClick={onDelete}>
-          <Trash2 size={15} />
-        </IconAction>
+        <DeleteAction onDelete={onDelete} />
       </div>
 
       <BlockEditor block={block} onChange={onChange} />
     </div>
+  )
+}
+
+/**
+ * Удаление в два нажатия. Кнопка стоит вплотную к стрелкам перемещения,
+ * а отмены у удаления блока нет: один промах пальцем стирал абзац навсегда.
+ * Вопрос снимается сам через 4 секунды — как в ConfirmRow профиля.
+ */
+function DeleteAction({ onDelete }: { onDelete: () => void }) {
+  const [armed, setArmed] = useState(false)
+
+  useEffect(() => {
+    if (!armed) return
+    const timer = window.setTimeout(() => setArmed(false), 4000)
+    return () => window.clearTimeout(timer)
+  }, [armed])
+
+  if (armed) {
+    return (
+      <button
+        type="button"
+        onClick={onDelete}
+        className="press label shrink-0 rounded-btn border border-warn/50 px-2.5 py-2 text-warn"
+      >
+        удалить?
+      </button>
+    )
+  }
+
+  return (
+    <IconAction label="Удалить блок" onClick={() => setArmed(true)}>
+      <Trash2 size={15} />
+    </IconAction>
   )
 }
 
@@ -334,7 +365,7 @@ function ImageBlockUpload({
 
   return (
     <div className="flex flex-col gap-2">
-      {url && <img src={url} alt="" className="h-32 w-full rounded-xl object-cover" />}
+      {url && <img src={url} alt="" className="h-32 w-full rounded-card object-cover" />}
 
       <div className="flex gap-2">
         <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center text-[15px] font-medium text-dim">

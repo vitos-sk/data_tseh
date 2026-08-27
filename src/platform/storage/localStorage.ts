@@ -17,15 +17,19 @@ export const localStore: KeyValueStore = {
   async setItem(key, value) {
     try {
       localStorage.setItem(PREFIX + key, value)
+      return true
     } catch {
-      /* приватный режим или переполнение — молча пропускаем */
+      // Приватный режим или переполнение. Возвращаем отказ: вызывающий
+      // сам решит, врать ли пользователю о сохранении.
+      return false
     }
   },
   async removeItem(key) {
     try {
       localStorage.removeItem(PREFIX + key)
+      return true
     } catch {
-      /* см. выше */
+      return false
     }
   },
 }

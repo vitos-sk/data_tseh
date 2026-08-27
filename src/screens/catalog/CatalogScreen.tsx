@@ -4,6 +4,7 @@ import { CategoryIcon } from '@/components/post/CategoryIcon'
 import { PostRow } from '@/components/post/PostRow'
 import { Screen } from '@/components/layout/Screen'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { LoadError } from '@/components/ui/LoadError'
 import { SearchField } from '@/components/ui/SearchField'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { CATEGORIES } from '@/data/categories'
@@ -15,13 +16,13 @@ export function CatalogScreen() {
   const [query, setQuery] = useState('')
   const searching = query.trim().length > 0
 
-  const { data: posts, loading } = useAsync(
+  const { data: posts, loading, error, retry } = useAsync(
     () => (searching ? catalogRepository.searchPosts(query) : catalogRepository.getPosts()),
     [query],
   )
 
   return (
-    <Screen title="каталог" subtitle="Пять направлений, посты без воды">
+    <Screen title="каталог" subtitle="Посты по направлениям, без воды">
       <div className="mb-6 px-5">
         <SearchField value={query} onChange={setQuery} placeholder="найти пост или тему" />
       </div>
@@ -34,8 +35,10 @@ export function CatalogScreen() {
         </div>
       )}
 
-      {!loading && searching && <SearchResults posts={posts ?? []} />}
-      {!loading && !searching && <GroupedPosts posts={posts ?? []} />}
+      {!loading && error && <LoadError what="каталог" onRetry={retry} />}
+
+      {!loading && !error && searching && <SearchResults posts={posts ?? []} />}
+      {!loading && !error && !searching && <GroupedPosts posts={posts ?? []} />}
     </Screen>
   )
 }
@@ -77,16 +80,16 @@ function GroupedPosts({ posts }: { posts: Post[] }) {
             <div className="mb-3.5 flex items-center gap-3 px-5">
               <CategoryIcon category={category} />
               <div className="min-w-0">
-                <h2 className="text-[17px] leading-tight font-bold tracking-[0.14em] lowercase">
+                <h2 className="type-heading font-bold tracking-[0.14em] lowercase">
                   {category.title}
                 </h2>
-                <p className="mt-1 truncate text-[11.5px] tracking-[0.02em] text-dim">
+                <p className="type-micro mt-1 truncate tracking-[0.02em] text-dim">
                   {pluralPosts(list.length)}
                 </p>
               </div>
             </div>
 
-            <p className="mb-3.5 px-5 text-[13px] leading-[1.7] tracking-[0.02em] text-dim">
+            <p className="type-body mb-3.5 px-5 tracking-[0.02em] text-dim">
               {category.description}
             </p>
 

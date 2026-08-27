@@ -15,7 +15,11 @@ export interface TelegramUser {
 
 export interface TelegramWebApp {
   initData: string
-  initDataUnsafe: { user?: TelegramUser }
+  initDataUnsafe: {
+    user?: TelegramUser
+    /** Полезная нагрузка ссылки t.me/<bot>/<app>?startapp=<param> */
+    start_param?: string
+  }
   version: string
   platform: string
   colorScheme: 'light' | 'dark'
@@ -37,7 +41,9 @@ export interface TelegramWebApp {
   /** Появился в Bot API 7.10 — в старых клиентах метода нет */
   setBottomBarColor?(color: string): void
   disableVerticalSwipes?(): void
+  /** Спрашивает подтверждение при свайпе вниз — защита несохранённых правок */
   enableClosingConfirmation?(): void
+  disableClosingConfirmation?(): void
 
   BackButton: {
     isVisible: boolean

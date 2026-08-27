@@ -1,6 +1,7 @@
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { getWebApp, openLink } from '@/platform/telegram'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatReadTime } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
@@ -43,6 +44,20 @@ export function AdminPostScreen() {
       published: post.published,
     })
   }, [post, draft])
+
+  /*
+   * Пока в черновике есть несохранённое, Telegram переспрашивает перед
+   * закрытием мини-аппы. Раньше свайп вниз выбрасывал правки молча —
+   * а редактируют посты с телефона, где этот жест случается сам собой.
+   */
+  const dirty = state === 'idle' && Boolean(draft)
+  useEffect(() => {
+    const app = getWebApp()
+    if (!app) return
+    if (dirty) app.enableClosingConfirmation?.()
+    else app.disableClosingConfirmation?.()
+    return () => app.disableClosingConfirmation?.()
+  }, [dirty])
 
   const patch = (values: Partial<PostDraft>) => {
     setDraft((prev) => (prev ? { ...prev, ...values } : prev))
@@ -89,7 +104,7 @@ export function AdminPostScreen() {
     return (
       <div className="flex flex-col gap-3 p-5">
         <Skeleton className="h-9 w-2/3" />
-        <Skeleton className="h-32 w-full rounded-2xl" />
+        <Skeleton className="h-32 w-full rounded-card" />
         <Skeleton className="h-12 w-full" />
       </div>
     )
@@ -107,19 +122,20 @@ export function AdminPostScreen() {
           <ArrowLeft size={18} />
         </button>
 
-        <h1 className="min-w-0 flex-1 truncate text-[17px] font-bold tracking-[0.1em] lowercase">
+        <h1 className="type-heading min-w-0 flex-1 truncate font-bold tracking-[0.1em] lowercase">
           {draft.title || 'Без названия'}
         </h1>
 
-        <a
-          href={`/p/${draft.slug}`}
-          target="_blank"
-          rel="noreferrer"
+        {/* Через openLink, а не target="_blank": внутри WebView Telegram
+            новая вкладка открывается непредсказуемо или не открывается вовсе */}
+        <button
+          type="button"
+          onClick={() => openLink(`${window.location.origin}/p/${draft.slug}`)}
           aria-label="Открыть пост"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
+          className="press relative flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim after:absolute after:-inset-1.5 after:content-['']"
         >
           <ExternalLink size={16} />
-        </a>
+        </button>
       </div>
 
       <div className="px-5">

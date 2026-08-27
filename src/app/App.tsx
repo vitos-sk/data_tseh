@@ -3,11 +3,19 @@ import { cn } from '@/lib/cn'
 import { RouterProvider } from 'react-router-dom'
 import { useSettingsStore } from '@/modules/settings/settings.store'
 import { initTelegram } from '@/platform/telegram'
+import { getStartPostSlug } from '@/platform/telegram/webapp'
 import { router } from './routes'
 
 export function App() {
   // Один раз на старте: разворачиваем окно, красим шапку, ловим высоту вьюпорта.
-  useEffect(() => initTelegram(), [])
+  // Плюс разбираем ссылку, по которой мини-апп открыли: пост, присланный
+  // в чат, обязан открыться постом, а не Главной.
+  useEffect(() => {
+    const stop = initTelegram()
+    const slug = getStartPostSlug()
+    if (slug) void router.navigate(`/p/${slug}`, { replace: true })
+    return stop
+  }, [])
 
   const reducedMotion = useSettingsStore((s) => s.reducedMotion)
 

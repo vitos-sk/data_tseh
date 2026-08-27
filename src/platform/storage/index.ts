@@ -9,4 +9,6 @@ import type { KeyValueStore } from './types'
  */
 export const storage: KeyValueStore = isInsideTelegram() ? cloudStorage : localStore
 
+export { MAX_VALUE_BYTES, byteSize } from './cloudStorage'
+
 export type { KeyValueStore }
