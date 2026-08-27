@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface AsyncState<T> {
   data: T | null
@@ -22,9 +22,19 @@ export function useAsync<T>(load: () => Promise<T>, deps: unknown[]): AsyncState
     loading: true,
     error: null,
   })
-  // Счётчик попыток входит в зависимости эффекта: увеличили — запрос ушёл заново.
+
+  // Счётчик попыток: увеличили — эффект перезапустился, запрос ушёл заново.
   const [attempt, setAttempt] = useState(0)
   const retry = useCallback(() => setAttempt((n) => n + 1), [])
+
+  // Функция загрузки пересоздаётся на каждый рендер, но перезапускать по ней
+  // запрос нельзя — это бесконечный цикл. Момент запуска задают только deps.
+  const loader = useRef(load)
+  useEffect(() => {
+    loader.current = load
+  })
+
+  const trigger = [...deps, attempt]
 
   // Список зависимостей приходит параметром — статически проверить его нельзя.
   // oxlint-disable-next-line react-hooks/exhaustive-deps
@@ -32,14 +42,15 @@ export function useAsync<T>(load: () => Promise<T>, deps: unknown[]): AsyncState
     let alive = true
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
-    load()
+    loader
+      .current()
       .then((data) => alive && setState({ data, loading: false, error: null }))
       .catch((error: Error) => alive && setState({ data: null, loading: false, error }))
 
     return () => {
       alive = false
     }
-  }, [...deps, attempt])
+  }, trigger)
 
   return { ...state, retry }
 }

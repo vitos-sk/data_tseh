@@ -91,7 +91,7 @@ export function BlockCard({
     <div className="rounded-[var(--radius-card)] bg-surface p-3">
       <div className="mb-2.5 flex items-center gap-1.5">
         <Icon size={14} className="shrink-0 text-accent-bright" />
-        <span className="flex-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
+        <span className="flex-1 type-caption font-semibold tracking-wide text-dim uppercase">
           {label}
         </span>
 
@@ -159,7 +159,7 @@ function IconAction({
       aria-label={label}
       onClick={onClick}
       disabled={disabled}
-      className="press flex size-8 shrink-0 items-center justify-center rounded-btn bg-inset text-dim disabled:opacity-30"
+      className="press relative flex size-8 shrink-0 items-center justify-center rounded-btn bg-inset text-dim after:absolute after:-inset-1.5 after:content-[''] disabled:opacity-30"
     >
       {children}
     </button>
@@ -290,7 +290,7 @@ function BlockEditor({
             placeholder="Текст промта целиком"
             rows={6}
           />
-          <span className="px-1 text-[12.5px] text-dim tabular-nums">
+          <span className="px-1 type-caption text-dim tabular-nums">
             {block.text.length} символов
           </span>
         </div>
@@ -329,7 +329,7 @@ function BlockEditor({
           <button
             type="button"
             onClick={() => onChange({ ...block, items: [...block.items, ''] })}
-            className="press self-start text-[15px] font-medium text-accent-bright"
+            className="press self-start type-ui font-medium text-accent-bright"
           >
             + пункт
           </button>
@@ -368,7 +368,7 @@ function ImageBlockUpload({
       {url && <img src={url} alt="" className="h-32 w-full rounded-card object-cover" />}
 
       <div className="flex gap-2">
-        <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center text-[15px] font-medium text-dim">
+        <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center type-ui font-medium text-dim">
           {uploading ? 'Загружаем…' : url ? 'Заменить' : 'Загрузить картинку'}
           <input
             type="file"
@@ -394,14 +394,14 @@ function ImageBlockUpload({
           <button
             type="button"
             onClick={() => onChange(undefined)}
-            className="press rounded-btn bg-inset px-4 py-2.5 text-[15px] font-medium text-dim"
+            className="press rounded-btn bg-inset px-4 py-2.5 type-ui font-medium text-dim"
           >
             Убрать
           </button>
         )}
       </div>
 
-      {error && <span className="text-[13px] text-accent-bright">{error}</span>}
+      {error && <span className="type-body text-accent-bright">{error}</span>}
     </div>
   )
 }
@@ -414,7 +414,7 @@ function ImageBlockUpload({
 export function AddBlockPanel({ onAdd }: { onAdd: (kind: PostBlockKind) => void }) {
   return (
     <div className="mt-4 rounded-[var(--radius-card)] border border-hairline bg-surface/50 p-3">
-      <p className="mb-2.5 px-1 text-[12.5px] font-semibold tracking-wide text-dim uppercase">
+      <p className="mb-2.5 px-1 type-caption font-semibold tracking-wide text-dim uppercase">
         Добавить блок
       </p>
 
@@ -428,7 +428,7 @@ export function AddBlockPanel({ onAdd }: { onAdd: (kind: PostBlockKind) => void 
               key={kind}
               type="button"
               onClick={() => onAdd(kind)}
-              className={`press flex flex-col items-center gap-1.5 rounded-btn border py-3 text-[13px] font-medium ${
+              className={`press flex flex-col items-center gap-1.5 rounded-btn border py-3 type-body font-medium ${
                 copyable
                   ? 'border-accent/26 bg-accent/[0.045] text-accent-bright'
                   : 'border-hairline bg-inset text-dim'
@@ -441,7 +441,7 @@ export function AddBlockPanel({ onAdd }: { onAdd: (kind: PostBlockKind) => void 
         })}
       </div>
 
-      <p className="mt-2.5 flex items-center gap-1.5 px-1 text-[12.5px] text-dim">
+      <p className="mt-2.5 flex items-center gap-1.5 px-1 type-caption text-dim">
         <Copy size={12} className="shrink-0" />
         подсвечены — блоки, которые читатель копирует одним нажатием
       </p>

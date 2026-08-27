@@ -49,8 +49,11 @@ export function AdminPostScreen() {
    * Пока в черновике есть несохранённое, Telegram переспрашивает перед
    * закрытием мини-аппы. Раньше свайп вниз выбрасывал правки молча —
    * а редактируют посты с телефона, где этот жест случается сам собой.
+   *
+   * Считаем именно правки, а не «открыт редактор»: вопрос на каждом выходе
+   * из нетронутого поста быстро учит нажимать «да» не глядя.
    */
-  const dirty = state === 'idle' && Boolean(draft)
+  const [dirty, setDirty] = useState(false)
   useEffect(() => {
     const app = getWebApp()
     if (!app) return
@@ -62,11 +65,13 @@ export function AdminPostScreen() {
   const patch = (values: Partial<PostDraft>) => {
     setDraft((prev) => (prev ? { ...prev, ...values } : prev))
     setState('idle')
+    setDirty(true)
   }
 
   const patchBlocks = (next: (prev: PostBlock[]) => PostBlock[]) => {
     setDraft((prev) => (prev ? { ...prev, blocks: next(prev.blocks) } : prev))
     setState('idle')
+    setDirty(true)
   }
 
   const save = async () => {
@@ -76,6 +81,7 @@ export function AdminPostScreen() {
     try {
       await adminRepository.updatePost(id, draft)
       setState('saved')
+      setDirty(false)
     } catch (e) {
       setState('error')
       setError(e instanceof Error ? e.message : 'Не удалось сохранить')
@@ -117,7 +123,7 @@ export function AdminPostScreen() {
           type="button"
           onClick={() => navigate(adminPath())}
           aria-label="К списку постов"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
+          className="press relative flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim after:absolute after:-inset-1.5 after:content-['']"
         >
           <ArrowLeft size={18} />
         </button>
@@ -144,14 +150,14 @@ export function AdminPostScreen() {
           value={draft.title}
           onChange={(e) => patch({ title: e.target.value })}
           placeholder="Название поста"
-          className="w-full rounded-btn bg-inset px-4 py-3 text-[18px] font-bold text-fg outline-none placeholder:text-dim"
+          className="w-full rounded-btn bg-inset px-4 py-3 type-heading font-bold text-fg outline-none placeholder:text-dim"
         />
       </div>
 
       <section className="mt-7 px-5">
         <div className="mb-2.5 flex items-baseline justify-between px-1">
-          <h2 className="text-[13px] font-semibold tracking-wide text-dim uppercase">Содержание</h2>
-          <span className="text-[12.5px] text-dim tabular-nums">
+          <h2 className="type-body font-semibold tracking-wide text-dim uppercase">Содержание</h2>
+          <span className="type-caption text-dim tabular-nums">
             {draft.blocks.length === 0
               ? 'пусто'
               : `блоков: ${draft.blocks.length} · ${formatReadTime(estimateReadMin(draft.blocks))}`}
@@ -181,7 +187,7 @@ export function AdminPostScreen() {
 
       <AdminPostSettings draft={draft} categories={categories ?? []} onPatch={patch} />
 
-      {error && <p className="mt-4 px-5 text-[14px] leading-snug text-accent-bright">{error}</p>}
+      {error && <p className="mt-4 px-5 type-ui text-accent-bright">{error}</p>}
 
       <DangerZone onDelete={() => void remove()} />
 
@@ -197,7 +203,7 @@ export function AdminPostScreen() {
           type="button"
           onClick={() => void save()}
           disabled={state === 'saving'}
-          className="press w-full rounded-btn bg-accent py-3.5 text-[16px] font-semibold text-bg disabled:opacity-40"
+          className="press w-full rounded-btn bg-accent py-3.5 type-input font-semibold text-bg disabled:opacity-40"
         >
           {state === 'saving'
             ? 'Сохраняем…'
@@ -219,18 +225,18 @@ function DangerZone({ onDelete }: { onDelete: () => void }) {
     <section className="mt-9 px-5">
       {asking ? (
         <div className="flex items-center gap-2 rounded-[var(--radius-card)] bg-surface p-3">
-          <span className="min-w-0 flex-1 text-[15px]">Удалить пост со всем содержанием?</span>
+          <span className="min-w-0 flex-1 type-ui">Удалить пост со всем содержанием?</span>
           <button
             type="button"
             onClick={() => setAsking(false)}
-            className="press rounded-btn bg-inset px-3.5 py-1.5 text-[14px] text-dim"
+            className="press rounded-btn bg-inset px-3.5 py-1.5 type-ui text-dim"
           >
             Отмена
           </button>
           <button
             type="button"
             onClick={onDelete}
-            className="press rounded-btn bg-accent px-3.5 py-1.5 text-[14px] font-semibold text-bg"
+            className="press rounded-btn bg-accent px-3.5 py-1.5 type-ui font-semibold text-bg"
           >
             Удалить
           </button>
@@ -239,7 +245,7 @@ function DangerZone({ onDelete }: { onDelete: () => void }) {
         <button
           type="button"
           onClick={() => setAsking(true)}
-          className="press w-full rounded-btn bg-surface py-3 text-[15px] font-medium text-accent-bright"
+          className="press w-full rounded-btn bg-surface py-3 type-ui font-medium text-accent-bright"
         >
           Удалить пост
         </button>

@@ -26,7 +26,7 @@ export function AdminLayout() {
           onClick={() => navigate(adminPath())}
           className="press min-w-0 flex-1 text-left"
         >
-          <p className="text-[15px] font-bold tracking-[0.14em] lowercase">редакция</p>
+          <p className="type-ui font-bold tracking-[0.14em] lowercase">редакция</p>
           <p className="label mt-1 truncate text-dim">{email}</p>
         </button>
 
@@ -34,7 +34,7 @@ export function AdminLayout() {
           type="button"
           onClick={() => void signOut()}
           aria-label="Выйти"
-          className="press flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim"
+          className="press relative flex size-9 shrink-0 items-center justify-center rounded-btn bg-inset text-dim after:absolute after:-inset-1.5 after:content-['']"
         >
           <LogOut size={17} />
         </button>

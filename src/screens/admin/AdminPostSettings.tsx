@@ -29,7 +29,7 @@ export function AdminPostSettings({
         aria-expanded={open}
       >
         <Settings2 size={16} className="shrink-0 text-dim" />
-        <span className="flex-1 text-[15px] font-semibold">Настройки поста</span>
+        <span className="flex-1 type-ui font-semibold">Настройки поста</span>
         <ChevronDown
           size={17}
           className={`shrink-0 text-dim transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
@@ -109,7 +109,7 @@ function CoverEditor({
 
       <div className="flex flex-col gap-3">
         <div className="flex gap-2">
-          <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center text-[15px] font-medium text-dim">
+          <label className="press flex-1 cursor-pointer rounded-btn bg-inset py-2.5 text-center type-ui font-medium text-dim">
             {uploading ? 'Загружаем…' : 'Загрузить картинку'}
             <input
               type="file"
@@ -126,7 +126,7 @@ function CoverEditor({
             <button
               type="button"
               onClick={() => onChange({ ...cover, imageUrl: undefined })}
-              className="press rounded-btn bg-inset px-4 py-2.5 text-[15px] font-medium text-dim"
+              className="press rounded-btn bg-inset px-4 py-2.5 type-ui font-medium text-dim"
             >
               Убрать
             </button>
@@ -149,7 +149,7 @@ function CoverEditor({
         </div>
       </div>
 
-      {error && <span className="mt-2 block text-[13px] text-accent-bright">{error}</span>}
+      {error && <span className="mt-2 block type-body text-accent-bright">{error}</span>}
     </Field>
   )
 }

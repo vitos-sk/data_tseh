@@ -35,7 +35,7 @@ export function CopyButton({ text, label, full = false, className }: CopyButtonP
         void copy(text)
       }}
       className={cn(
-        'press relative flex h-9 shrink-0 items-center justify-center gap-2 rounded-btn border text-[11px] font-bold tracking-[0.16em] uppercase transition-colors duration-200',
+        'press relative flex h-9 shrink-0 items-center justify-center gap-2 rounded-btn border type-micro font-bold tracking-[0.16em] uppercase transition-colors duration-200',
         "after:absolute after:-inset-1.5 after:content-['']",
         label ? 'px-3.5' : 'w-9',
         full && 'h-11 w-full',

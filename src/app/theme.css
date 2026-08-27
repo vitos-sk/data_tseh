@@ -295,6 +295,12 @@
   line-height: 1.25;
 }
 
+/* Заголовок секции внутри экрана */
+@utility type-section {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
 /* Заголовок поста */
 @utility type-title {
   font-size: 22px;

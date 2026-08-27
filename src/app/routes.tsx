@@ -42,7 +42,7 @@ const AdminPostScreen = lazy(() =>
 function AdminChunk({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
-      fallback={<div className="px-5 py-20 text-center text-[15px] text-muted">Загрузка…</div>}
+      fallback={<div className="px-5 py-20 text-center type-ui text-muted">Загрузка…</div>}
     >
       {children}
     </Suspense>

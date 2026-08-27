@@ -13,19 +13,19 @@ export function CommandBlock({ command, note }: { command: string; note?: string
       <div className="flex items-start gap-3 rounded-card border border-accent/18 bg-black/70 p-3">
         <span
           aria-hidden
-          className="mt-px shrink-0 text-[13px] leading-[1.7] font-bold text-accent-bright select-none"
+          className="mt-px shrink-0 type-body font-bold text-accent-bright select-none"
         >
           $
         </span>
 
-        <code className="min-w-0 flex-1 text-[13px] leading-[1.7] break-words whitespace-pre-wrap text-fg">
+        <code className="min-w-0 flex-1 type-body break-words whitespace-pre-wrap text-fg">
           {command}
         </code>
 
         <CopyButton text={command} />
       </div>
 
-      {note && <p className="mt-2 px-1 text-[12.5px] leading-[1.7] text-dim">{note}</p>}
+      {note && <p className="mt-2 px-1 type-caption text-dim">{note}</p>}
     </div>
   )
 }

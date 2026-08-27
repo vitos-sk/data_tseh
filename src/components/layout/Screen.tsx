@@ -29,11 +29,11 @@ export function Screen({ children, title, subtitle, withTabBar = true, className
           {/* Заголовок строчный, метка над ним — капсовая: тот самый контраст,
               на котором держится вся типографика. */}
           <p className="label mb-2.5 text-accent">цех</p>
-          <h1 className="text-[28px] leading-[1.15] font-extrabold tracking-[0.14em] lowercase">
+          <h1 className="type-display font-extrabold tracking-[0.14em] lowercase">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2.5 text-[13px] leading-[1.7] tracking-[0.02em] text-dim">
+            <p className="mt-2.5 type-body tracking-[0.02em] text-dim">
               {subtitle}
             </p>
           )}

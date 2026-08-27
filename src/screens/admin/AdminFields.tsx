@@ -1,7 +1,7 @@
 import { cn } from '@/lib/cn'
 
 const FIELD =
-  'w-full rounded-btn bg-inset px-4 py-3 text-[16px] text-fg outline-none placeholder:text-dim'
+  'w-full rounded-btn bg-inset px-4 py-3 type-input text-fg outline-none placeholder:text-dim'
 
 export function Field({
   label,
@@ -14,11 +14,11 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block px-1 text-[13px] font-semibold tracking-wide text-dim uppercase">
+      <span className="mb-1.5 block px-1 type-body font-semibold tracking-wide text-dim uppercase">
         {label}
       </span>
       {children}
-      {hint && <span className="mt-1.5 block px-1 text-[13px] leading-snug text-dim">{hint}</span>}
+      {hint && <span className="mt-1.5 block px-1 type-body text-dim">{hint}</span>}
     </label>
   )
 }
@@ -129,7 +129,7 @@ export function ChoiceRow<T extends string>({
           type="button"
           onClick={() => onChange(option.value)}
           className={cn(
-            'press rounded-btn px-4 py-2 text-[15px] font-medium transition-colors duration-200',
+            'press rounded-btn px-4 py-2 type-ui font-medium transition-colors duration-200',
             value === option.value ? 'bg-accent text-bg' : 'bg-inset text-dim',
           )}
         >

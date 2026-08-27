@@ -48,8 +48,8 @@ export function LinkRow({ icon, label, value, onClick, accent }: RowProps) {
       className="press flex w-full items-center gap-3.5 px-3.5 py-3.5 text-left"
     >
       <IconBox icon={icon} accent={accent} />
-      <span className="flex-1 text-[14px] font-medium tracking-[0.03em]">{label}</span>
-      {value && <span className="text-[12.5px] tracking-[0.02em] text-dim">{value}</span>}
+      <span className="flex-1 type-ui font-medium tracking-[0.03em]">{label}</span>
+      {value && <span className="type-caption tracking-[0.02em] text-dim">{value}</span>}
       <ChevronRight size={16} className="shrink-0 text-dim" />
     </button>
   )
@@ -70,9 +70,9 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
       <IconBox icon={icon} accent={accent} />
 
       <span className="min-w-0 flex-1">
-        <span className="block text-[14px] font-medium tracking-[0.03em]">{label}</span>
+        <span className="block type-ui font-medium tracking-[0.03em]">{label}</span>
         {hint && (
-          <span className="mt-1 block text-[11.5px] leading-snug tracking-[0.02em] text-dim">
+          <span className="mt-1 block type-micro tracking-[0.02em] text-dim">
             {hint}
           </span>
         )}
@@ -93,6 +93,8 @@ export function ToggleRow({ icon, label, hint, checked, onChange, accent }: Togg
         }}
         className={cn(
           'relative h-[28px] w-[48px] shrink-0 rounded-btn border transition-colors duration-200',
+          // Видимая высота 28px, цель касания — 44px
+          "after:absolute after:-inset-y-2 after:inset-x-0 after:content-['']",
           checked
             ? 'border-accent bg-accent/18 shadow-[var(--glow-accent)]'
             : 'border-hairline bg-inset',
@@ -149,7 +151,7 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
         className="press flex w-full items-center gap-3.5 px-3.5 py-3.5 text-left"
       >
         <IconBox icon={icon} accent={accent} />
-        <span className="flex-1 text-[14px] font-medium tracking-[0.03em]">{label}</span>
+        <span className="flex-1 type-ui font-medium tracking-[0.03em]">{label}</span>
         <ChevronRight size={16} className="shrink-0 text-dim" />
       </button>
     )
@@ -158,7 +160,7 @@ export function ConfirmRow({ icon, label, confirmLabel, onConfirm, accent }: Con
   return (
     <div className="flex items-center gap-3 px-3.5 py-3.5">
       <IconBox icon={icon} accent={accent} />
-      <span className="min-w-0 flex-1 text-[13px] font-medium tracking-[0.03em]">
+      <span className="min-w-0 flex-1 type-body font-medium tracking-[0.03em]">
         {confirmLabel}
       </span>
 

@@ -23,7 +23,7 @@ export function SearchField({ value, onChange, placeholder }: SearchFieldProps) 
         enterKeyHint="search"
         autoComplete="off"
         spellCheck={false}
-        className="min-w-0 flex-1 bg-transparent text-[15px] tracking-[0.02em] text-fg caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
+        className="min-w-0 flex-1 bg-transparent type-ui tracking-[0.02em] text-fg caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
       />
 
       {value && (

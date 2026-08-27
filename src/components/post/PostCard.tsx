@@ -36,7 +36,7 @@ export function PostCard({ post }: { post: Post }) {
       <div className="flex items-start gap-3 px-1 pt-3.5 pb-1">
         <CategoryIcon category={category} size="sm" />
         <div className="min-w-0 flex-1">
-          <h3 className="type-ui leading-snug font-bold tracking-[0.04em]">
+          <h3 className="type-ui font-bold tracking-[0.04em]">
             <Link
               to={`/p/${post.slug}`}
               onClick={() => haptic('tap')}

@@ -11,14 +11,14 @@ export function PromptBlock({ text, title }: { text: string; title?: string }) {
     <div className="rounded-card border border-accent/22 bg-accent/[0.03] p-3.5">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <span className="label text-accent-bright">промт</span>
-        <span className="text-[11px] text-dim tabular-nums">{text.length} симв.</span>
+        <span className="type-micro text-dim tabular-nums">{text.length} симв.</span>
       </div>
 
       {title && (
-        <p className="mb-2.5 text-[13.5px] leading-snug font-bold tracking-[0.04em]">{title}</p>
+        <p className="mb-2.5 type-body font-bold tracking-[0.04em]">{title}</p>
       )}
 
-      <p className="text-[13.5px] leading-[1.8] tracking-[0.01em] whitespace-pre-wrap text-muted">
+      <p className="type-body tracking-[0.01em] whitespace-pre-wrap text-muted">
         {text}
       </p>
 

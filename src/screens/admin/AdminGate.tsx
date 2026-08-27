@@ -51,7 +51,7 @@ export function AdminGate({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => void signOut()}
-              className="press rounded-btn border border-hairline bg-inset px-6 py-3 text-[14px] font-medium tracking-[0.06em] text-dim"
+              className="press rounded-btn border border-hairline bg-inset px-6 py-3 type-ui font-medium tracking-[0.06em] text-dim"
             >
               выйти
             </button>
@@ -113,7 +113,7 @@ function SignInForm() {
         <span className="glass mb-5 flex size-14 items-center justify-center rounded-card text-accent">
           <KeyRound size={24} />
         </span>
-        <h1 className="text-[20px] font-extrabold tracking-[0.14em] lowercase">вход в редакцию</h1>
+        <h1 className="type-section font-extrabold tracking-[0.14em] lowercase">вход в редакцию</h1>
         <p className="label mt-3 text-dim">почта и пароль администратора</p>
       </div>
 
@@ -123,7 +123,7 @@ function SignInForm() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="почта@пример.ру"
         autoComplete="username"
-        className="mb-2.5 w-full rounded-btn border border-hairline bg-inset px-4 py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
+        className="mb-2.5 w-full rounded-btn border border-hairline bg-inset px-4 py-3.5 type-ui tracking-[0.02em] caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
       />
 
       <div className="mb-4 flex items-center gap-2 rounded-btn border border-hairline bg-inset pr-3 pl-4">
@@ -134,7 +134,7 @@ function SignInForm() {
           onKeyDown={(e) => e.key === 'Enter' && void signIn()}
           placeholder="пароль"
           autoComplete="current-password"
-          className="min-w-0 flex-1 bg-transparent py-3.5 text-[15px] tracking-[0.02em] caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
+          className="min-w-0 flex-1 bg-transparent py-3.5 type-ui tracking-[0.02em] caret-[var(--color-accent-bright)] outline-none placeholder:text-dim"
         />
         <button
           type="button"
@@ -156,7 +156,7 @@ function SignInForm() {
       </button>
 
       {state === 'error' && (
-        <p className="mt-3 text-center text-[14px] leading-snug text-accent-bright">{message}</p>
+        <p className="mt-3 text-center type-ui text-accent-bright">{message}</p>
       )}
     </div>
   )

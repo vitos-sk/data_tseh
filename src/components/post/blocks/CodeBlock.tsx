@@ -13,7 +13,7 @@ export function CodeBlock({ lang, code }: { lang: string; code: string }) {
       </div>
 
       <pre className="scroll-x-clean p-4">
-        <code className="text-[12.5px] leading-[1.75] whitespace-pre text-fg">{code}</code>
+        <code className="type-caption whitespace-pre text-fg">{code}</code>
       </pre>
     </div>
   )

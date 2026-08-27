@@ -46,7 +46,7 @@ export function RecentSection() {
           <CoverArt cover={post.cover} className="size-14 shrink-0 rounded-[2px]" />
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[14px] font-bold tracking-[0.04em]">{post.title}</p>
+            <p className="truncate type-ui font-bold tracking-[0.04em]">{post.title}</p>
             <p className="label mt-2 truncate text-dim">{formatReadTime(post.readMin)}</p>
           </div>
 

@@ -1,5 +1,5 @@
 import { Bookmark, House, LayoutGrid, User } from 'lucide-react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { useLibraryStore } from '@/modules/library'
 import { haptic } from '@/platform/telegram'
@@ -20,11 +20,13 @@ const TABS = [
  */
 export function TabBar() {
   const savedCount = useLibraryStore((s) => s.saved.length)
-  const { pathname } = useLocation()
 
-  // Открытый пост — продолжение каталога: подсвечиваем его, чтобы панель
-  // не выглядела «погасшей» во время чтения.
-  const postIsOpen = pathname.startsWith('/p/')
+  /*
+   * На открытом посте не горит ни одна вкладка, и это правильно: пост лежит
+   * не «в каталоге», а поверх любого экрана, откуда его открыли. Прежняя
+   * подсветка «Каталога» отвечала на вопрос «где я» неправдой — человек мог
+   * прийти сюда с Главной, из закладок или по ссылке из чата.
+   */
 
   return (
     <nav
@@ -42,14 +44,12 @@ export function TabBar() {
                 cn(
                   'relative flex h-full flex-col items-center justify-center gap-1.5',
                   'transition-colors duration-200',
-                  isActive || (postIsOpen && to === '/catalog')
-                    ? 'text-accent-bright'
-                    : 'text-dim',
+                  isActive ? 'text-accent-bright' : 'text-dim',
                 )
               }
             >
               {({ isActive }) => {
-                const active = isActive || (postIsOpen && to === '/catalog')
+                const active = isActive
                 return (
                   <>
                     {/* Светящаяся риска сверху: у активной вкладки «горит» контакт */}

@@ -18,7 +18,7 @@ export function Block({ block }: { block: PostBlock }) {
   switch (block.type) {
     case 'heading':
       return (
-        <h2 className="mt-4 text-[17px] leading-tight font-bold tracking-[0.12em]">
+        <h2 className="mt-4 type-heading font-bold tracking-[0.12em]">
           <span className="mr-2 text-accent">#</span>
           {block.text}
         </h2>
@@ -26,7 +26,7 @@ export function Block({ block }: { block: PostBlock }) {
 
     case 'text':
       return (
-        <p className="text-[14.5px] leading-[1.85] tracking-[0.01em] text-muted">{block.text}</p>
+        <p className="type-ui tracking-[0.01em] text-muted">{block.text}</p>
       )
 
     case 'image':
@@ -44,10 +44,10 @@ export function Block({ block }: { block: PostBlock }) {
         <ol className="flex flex-col gap-3">
           {block.items.map((item, i) => (
             <li key={i} className="flex gap-3">
-              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[2px] border border-accent/25 bg-accent/[0.07] text-[11px] font-bold text-accent-bright tabular-nums">
+              <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[2px] border border-accent/25 bg-accent/[0.07] type-micro font-bold text-accent-bright tabular-nums">
                 {i + 1}
               </span>
-              <span className="flex-1 text-[14.5px] leading-[1.8] tracking-[0.01em] text-muted">
+              <span className="flex-1 type-ui tracking-[0.01em] text-muted">
                 {item}
               </span>
             </li>
@@ -59,7 +59,7 @@ export function Block({ block }: { block: PostBlock }) {
             <li key={i} className="flex gap-3">
               {/* Маркер — квадрат, а не точка: круглых форм в интерфейсе нет */}
               <span className="mt-[10px] size-1.5 shrink-0 bg-accent" />
-              <span className="flex-1 text-[14.5px] leading-[1.8] tracking-[0.01em] text-muted">
+              <span className="flex-1 type-ui tracking-[0.01em] text-muted">
                 {item}
               </span>
             </li>
@@ -70,7 +70,7 @@ export function Block({ block }: { block: PostBlock }) {
     case 'quote':
       return (
         <blockquote className="border-l-2 border-accent pl-4">
-          <p className="text-[15px] leading-[1.7] tracking-[0.02em] text-fg">{block.text}</p>
+          <p className="type-ui tracking-[0.02em] text-fg">{block.text}</p>
           {block.author && (
             <cite className="label mt-2.5 block text-dim not-italic">— {block.author}</cite>
           )}
@@ -93,7 +93,7 @@ export function Block({ block }: { block: PostBlock }) {
           style={{ backgroundColor: `${TONE.color}${TONE.tint}`, borderColor: `${TONE.color}${TONE.edge}` }}
         >
           <TONE.Icon size={17} color={TONE.color} className="mt-0.5 shrink-0" />
-          <p className="text-[13.5px] leading-[1.7] tracking-[0.01em] text-muted">{block.text}</p>
+          <p className="type-body tracking-[0.01em] text-muted">{block.text}</p>
         </div>
       )
     }
